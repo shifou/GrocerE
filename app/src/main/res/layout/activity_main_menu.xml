@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@android:color/black">
+
+    <!--<EditText android:id="@+id/edit_message"-->
+        <!--android:layout_weight="1"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="@string/edit_message" />-->
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_submitprice"
+        android:onClick="submitPrice"
+        android:background="@android:color/holo_purple"
+        android:theme="@style/Base.TextAppearance.AppCompat.Large.Inverse"
+        android:textColor="@android:color/black"
+        android:id="@+id/button1" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_requestprice"
+        android:onClick="requestPrice"
+        android:background="@android:color/holo_blue_dark"
+        android:theme="@style/Base.TextAppearance.AppCompat.Large.Inverse"
+        android:textColor="@android:color/black"
+        android:layout_below="@+id/button1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/button2"/>
+
+    <Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/button_changestores"
+    android:onClick="changeStores"
+    android:background="@android:color/holo_orange_dark"
+    android:theme="@style/Base.TextAppearance.AppCompat.Large.Inverse"
+    android:textColor="@android:color/black"
+    android:layout_below="@+id/button2"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:id="@+id/button3"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_close"
+        android:onClick="closeApplication"
+        android:background="@android:color/holo_red_dark"
+        android:theme="@style/Base.TextAppearance.AppCompat.Large.Inverse"
+        android:textColor="@android:color/black"
+        android:id="@+id/button4"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>
