@@ -67,7 +67,7 @@
     <TextView
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="22dp"
         android:id="@+id/textView6"
         android:layout_alignTop="@+id/textView5"
         android:layout_toRightOf="@+id/textView5"
@@ -83,19 +83,21 @@
     <EditText
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="22dp"
         android:id="@+id/editText1"
         android:layout_alignTop="@+id/textView1"
         android:layout_toRightOf="@+id/textView1"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:background="@android:color/white"
-        android:hint="@string/name_message" />
+        android:hint="@string/name_message"
+        android:lines="1"
+        android:imeOptions="actionNext" />
 
     <EditText
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="22dp"
         android:id="@+id/editText2"
         android:layout_alignTop="@+id/textView2"
         android:layout_toRightOf="@+id/textView2"
@@ -103,24 +105,29 @@
         android:layout_alignParentEnd="true"
         android:background="@android:color/darker_gray"
         android:autoText="false"
-        android:hint="@string/quantity_message" />
+        android:lines="1"
+        android:hint="@string/quantity_message"
+        android:imeOptions="actionNext" />
 
     <EditText
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="22dp"
         android:id="@+id/editText3"
         android:layout_alignTop="@+id/textView3"
         android:layout_toRightOf="@+id/textView3"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:background="@android:color/white"
-        android:hint="@string/price_message" />
+        android:hint="@string/price_message"
+        android:lines="1"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionNext" />
 
     <EditText
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="22dp"
         android:id="@+id/editText4"
         android:layout_alignTop="@+id/textView4"
         android:layout_toRightOf="@+id/textView4"
@@ -128,7 +135,9 @@
         android:layout_alignParentEnd="true"
         android:background="@android:color/darker_gray"
         android:autoText="false"
-        android:hint="@string/store_message" />
+        android:lines="1"
+        android:hint="@string/store_message"
+        android:imeOptions="actionNext" />
 
     <Button
         android:layout_width="wrap_content"

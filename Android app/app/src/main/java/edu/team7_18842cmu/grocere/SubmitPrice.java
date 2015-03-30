@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -84,15 +85,30 @@ public class SubmitPrice extends ActionBarActivity {
 
 
     public void submitPrice(View view) {
+        final EditText item = (EditText) findViewById(R.id.editText1);
         new AlertDialog.Builder(this)
                 .setTitle("Status Message")
-                .setMessage("Price submitted!")
+                .setMessage("Price submitted!\n\nItem: " + item.getText())
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue
+                        clearForm();
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    public void clearForm() {
+        EditText item = (EditText) findViewById(R.id.editText1);
+        EditText quantity = (EditText) findViewById(R.id.editText2);
+        EditText store = (EditText) findViewById(R.id.editText3);
+        EditText price = (EditText) findViewById(R.id.editText4);
+        TextView date = (TextView) findViewById(R.id.textView6);
+        item.setText("");
+        quantity.setText("");
+        store.setText("");
+        price.setText("");
+        date.setText("");
     }
 }
