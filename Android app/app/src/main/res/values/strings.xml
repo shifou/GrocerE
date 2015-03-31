@@ -10,6 +10,7 @@
     <string name="button_close">Close Application</string>
     <string name="button_submit">Submit</string>
     <string name="button_request">Request</string>
+    <string name="button_save">Save</string>
 
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_submit_price">Submit Price</string>
@@ -27,5 +28,10 @@
     <string name="date_message">Enter the purchase date</string>
     <string name="store_message">Enter the store name</string>
     <string name="price_message">Enter the price paid</string>
+
+    <string name="store1">Giant Eagle</string>
+    <string name="store2">Trader Joe\'s</string>
+    <string name="store3">Shop-n-Save</string>
+    <string name="store4">Aldi</string>
 
 </resources>

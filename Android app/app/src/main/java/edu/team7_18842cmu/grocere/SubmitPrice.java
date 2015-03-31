@@ -86,17 +86,52 @@ public class SubmitPrice extends ActionBarActivity {
 
     public void submitPrice(View view) {
         final EditText item = (EditText) findViewById(R.id.editText1);
-        new AlertDialog.Builder(this)
-                .setTitle("Status Message")
-                .setMessage("Price submitted!\n\nItem: " + item.getText())
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // continue
-                        clearForm();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+        if(checkForm()){
+            new AlertDialog.Builder(this)
+                    .setTitle("Error")
+                    .setMessage("Missing a required field")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        } else {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Status Message")
+                    .setMessage("Price submitted!\n\nItem: " + item.getText())
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue
+                            clearForm();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
+
+    }
+
+    public boolean checkForm() {
+        EditText item = (EditText) findViewById(R.id.editText1);
+        EditText quantity = (EditText) findViewById(R.id.editText2);
+        EditText store = (EditText) findViewById(R.id.editText3);
+        EditText price = (EditText) findViewById(R.id.editText4);
+        TextView date = (TextView) findViewById(R.id.textView6);
+        if(item.getText().toString().trim().length() == 0)
+            return true;
+        if(quantity.getText().toString().trim().length() == 0)
+            return true;
+        if(store.getText().toString().trim().length() == 0)
+            return true;
+        if(price.getText().toString().trim().length() == 0)
+            return true;
+        if(date.getText().toString().trim().length() == 0)
+            return true;
+        return false;
     }
 
     public void clearForm() {

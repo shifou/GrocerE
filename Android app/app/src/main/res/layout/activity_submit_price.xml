@@ -78,7 +78,8 @@
         android:onClick="showDatePicker"
         android:layout_below="@+id/textView5"
         android:textSize="18sp"
-        android:layout_alignBottom="@+id/textView5" />
+        android:layout_alignBottom="@+id/textView5"
+        android:clickable="true" />
 
     <EditText
         android:layout_weight="1"
