@@ -1,11 +1,10 @@
-package edu.team7_18842cmu.grocere;
+package edu.team7_18842cmu.activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -18,12 +17,16 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 
+import edu.team7_18842cmu.dbutil.DBManager;
+import edu.team7_18842cmu.model.ItemInfo;
+
 
 public class SubmitPrice extends ActionBarActivity {
-
+    private DBManager dbm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dbm = new DBManager(this);
         setContentView(R.layout.activity_submit_price);
         Button button1 = (Button)findViewById(R.id.submitbutton);
 
@@ -52,7 +55,7 @@ public class SubmitPrice extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class DatePickerFragment extends DialogFragment
+    private class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
         @Override
@@ -85,8 +88,14 @@ public class SubmitPrice extends ActionBarActivity {
 
 
     public void submitPrice(View view) {
-        final EditText item = (EditText) findViewById(R.id.editText1);
-        if(checkForm()){
+        EditText item = (EditText) findViewById(R.id.editText1);
+        EditText quantity = (EditText) findViewById(R.id.editText2);
+        EditText store = (EditText) findViewById(R.id.editText3);
+        EditText price = (EditText) findViewById(R.id.editText4);
+        TextView date = (TextView) findViewById(R.id.textView6);
+        final ItemInfo itemInfo = new ItemInfo(item.getText().toString(), price.getText().toString(),
+                                    store.getText().toString(), date.getText().toString(), quantity.getText().toString());
+        if(itemInfo.checkForm()){
             new AlertDialog.Builder(this)
                     .setTitle("Error")
                     .setMessage("Missing a required field")
@@ -104,8 +113,10 @@ public class SubmitPrice extends ActionBarActivity {
                     .setMessage("Price submitted!\n\nItem: " + item.getText())
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            // continue
+
+                            dbm.insert("priceInfo", itemInfo.getAttributes());
                             clearForm();
+                            dbm.queryTest();
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -115,24 +126,7 @@ public class SubmitPrice extends ActionBarActivity {
 
     }
 
-    public boolean checkForm() {
-        EditText item = (EditText) findViewById(R.id.editText1);
-        EditText quantity = (EditText) findViewById(R.id.editText2);
-        EditText store = (EditText) findViewById(R.id.editText3);
-        EditText price = (EditText) findViewById(R.id.editText4);
-        TextView date = (TextView) findViewById(R.id.textView6);
-        if(item.getText().toString().trim().length() == 0)
-            return true;
-        if(quantity.getText().toString().trim().length() == 0)
-            return true;
-        if(store.getText().toString().trim().length() == 0)
-            return true;
-        if(price.getText().toString().trim().length() == 0)
-            return true;
-        if(date.getText().toString().trim().length() == 0)
-            return true;
-        return false;
-    }
+
 
     public void clearForm() {
         EditText item = (EditText) findViewById(R.id.editText1);

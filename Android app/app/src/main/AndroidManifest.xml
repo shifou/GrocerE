@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.team7_18842cmu.grocere" >
+    package="edu.team7_18842cmu.activities" >
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <uses-sdk android:minSdkVersion="22"/>
         <activity
-            android:name=".MainMenu"
+            android:name="edu.team7_18842cmu.activities.MainMenu"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,28 +18,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SubmitPrice"
+            android:name="edu.team7_18842cmu.activities.SubmitPrice"
             android:label="@string/title_activity_submit_price"
-            android:parentActivityName=".MainMenu" >
+            android:parentActivityName="edu.team7_18842cmu.activities.MainMenu" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.team7_18842cmu.grocere.MainMenu" />
+                android:value="edu.team7_18842cmu.activities.MainMenu" />
         </activity>
         <activity
-            android:name=".RequestPrice"
+            android:name="edu.team7_18842cmu.activities.RequestPrice"
             android:label="@string/title_activity_request_price"
-            android:parentActivityName=".MainMenu" >
+            android:parentActivityName="edu.team7_18842cmu.activities.MainMenu" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.team7_18842cmu.grocere.MainMenu" />
+                android:value="edu.team7_18842cmu.activities.MainMenu" />
         </activity>
         <activity
-            android:name=".ChangeStores"
+            android:name="edu.team7_18842cmu.activities.ChangeStores"
             android:label="@string/title_activity_change_stores"
-            android:parentActivityName=".MainMenu" >
+            android:parentActivityName="edu.team7_18842cmu.activities.MainMenu" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.team7_18842cmu.grocere.MainMenu" />
+                android:value="edu.team7_18842cmu.activities.MainMenu" />
         </activity>
     </application>
 
