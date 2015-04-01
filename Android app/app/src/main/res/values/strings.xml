@@ -34,4 +34,8 @@
     <string name="store3">Shop-n-Save</string>
     <string name="store4">Aldi</string>
 
+    <string-array name="store_array">
+        <item>Choose a store</item>
+    </string-array>
+
 </resources>

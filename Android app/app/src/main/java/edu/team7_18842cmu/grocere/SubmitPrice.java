@@ -6,17 +6,22 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 public class SubmitPrice extends ActionBarActivity {
@@ -34,6 +39,25 @@ public class SubmitPrice extends ActionBarActivity {
                     }
                 }
         );
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner1);
+        ArrayAdapter<String> adapter;
+        List<String> list;
+
+        list = new ArrayList<String>();
+        list.add("Choose a store");
+        if(getFromSP("cb1"))
+            list.add(getResources().getString(R.string.store1));
+        if(getFromSP("cb2"))
+            list.add(getResources().getString(R.string.store2));
+        if(getFromSP("cb3"))
+            list.add(getResources().getString(R.string.store3));
+        if(getFromSP("cb4"))
+            list.add(getResources().getString(R.string.store4));
+
+        adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, list);
+        spinner.setAdapter(adapter);
+
     }
 
 
@@ -71,7 +95,7 @@ public class SubmitPrice extends ActionBarActivity {
             // Do something with the date chosen by the user
             month++;
             String date = month + "/" + day + "/" + year;
-            TextView selection = (TextView) findViewById(R.id.textView6);
+            TextView selection = (TextView) findViewById(R.id.editText6);
             selection.setText(date);
 
         }
@@ -86,10 +110,11 @@ public class SubmitPrice extends ActionBarActivity {
 
     public void submitPrice(View view) {
         final EditText item = (EditText) findViewById(R.id.editText1);
-        if(checkForm()){
+        String missing_fields = checkForm();
+        if(!missing_fields.isEmpty()){
             new AlertDialog.Builder(this)
                     .setTitle("Error")
-                    .setMessage("Missing a required field")
+                    .setMessage("The following fields are required:\n" + missing_fields)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // continue
@@ -115,35 +140,68 @@ public class SubmitPrice extends ActionBarActivity {
 
     }
 
-    public boolean checkForm() {
+    public String checkForm() {
+        String response = "";
+        Boolean missing_flag = false;
         EditText item = (EditText) findViewById(R.id.editText1);
         EditText quantity = (EditText) findViewById(R.id.editText2);
-        EditText store = (EditText) findViewById(R.id.editText3);
+        Spinner store = (Spinner) findViewById(R.id.spinner1);
         EditText price = (EditText) findViewById(R.id.editText4);
-        TextView date = (TextView) findViewById(R.id.textView6);
-        if(item.getText().toString().trim().length() == 0)
-            return true;
-        if(quantity.getText().toString().trim().length() == 0)
-            return true;
-        if(store.getText().toString().trim().length() == 0)
-            return true;
-        if(price.getText().toString().trim().length() == 0)
-            return true;
-        if(date.getText().toString().trim().length() == 0)
-            return true;
-        return false;
+        TextView date = (TextView) findViewById(R.id.editText6);
+
+        if(store.getSelectedItem().toString() == "Choose a store") {
+                response += "Store name";
+                missing_flag = true;
+        }
+
+        if(item.getText().toString().trim().length() == 0){
+            if(!missing_flag) {
+                response += "Item name";
+                missing_flag = true;
+            } else
+            response += ", Item name";
+        }
+
+        if(quantity.getText().toString().trim().length() == 0){
+            if(!missing_flag) {
+                response += "Quantity";
+                missing_flag = true;
+            } else
+                response += ", Quantity";
+        }
+
+        if(price.getText().toString().trim().length() == 0) {
+            if (!missing_flag) {
+                response += "Price";
+                missing_flag = true;
+
+            } else
+                response += ", Price";
+        }
+
+        if(date.getText().toString().trim().length() == 0) {
+            if (!missing_flag) {
+                response += "Purchase date";
+            } else
+                response += ", Purchase date";
+        }
+
+        return response;
     }
 
     public void clearForm() {
         EditText item = (EditText) findViewById(R.id.editText1);
         EditText quantity = (EditText) findViewById(R.id.editText2);
-        EditText store = (EditText) findViewById(R.id.editText3);
         EditText price = (EditText) findViewById(R.id.editText4);
-        TextView date = (TextView) findViewById(R.id.textView6);
+        TextView date = (TextView) findViewById(R.id.editText6);
         item.setText("");
         quantity.setText("");
-        store.setText("");
         price.setText("");
         date.setText("");
+    }
+
+    private boolean getFromSP(String key){
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, false);
     }
 }

@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -47,16 +48,32 @@ public class RequestPrice extends ActionBarActivity {
     }
 
     public void requestPrice(View view) {
-        new AlertDialog.Builder(this)
-                .setTitle("Status Message")
-                .setMessage("Price requested!")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // continue
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+        final EditText item = (EditText) findViewById(R.id.editText5);
+        if(item.getText().toString().trim().length() == 0){
+            new AlertDialog.Builder(this)
+                    .setTitle("Error")
+                    .setMessage("You must submit an item name.")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        } else {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Status Message")
+                    .setMessage("Price requested!\n\nItem: " + item.getText())
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue
+                            item.setText("");
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
     }
 }
 

@@ -14,35 +14,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/store1"
-        android:onClick="onCheckboxClicked"
         android:textColor="@android:color/white" />
+
     <CheckBox android:id="@+id/store2checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/store2"
-        android:onClick="onCheckboxClicked"
         android:textColor="@android:color/white" />
+
     <CheckBox android:id="@+id/store3checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/store3"
-        android:onClick="onCheckboxClicked"
         android:textColor="@android:color/white" />
+
     <CheckBox android:id="@+id/store4checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/store4"
-        android:onClick="onCheckboxClicked"
         android:textColor="@android:color/white" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_save"
-        android:id="@+id/savebutton"
-        android:layout_gravity="center_horizontal"
-        android:background="#ff00ff00"
-        android:textColor="@android:color/black"
-        android:theme="@style/Base.TextAppearance.AppCompat.Large.Inverse" />
 
 </LinearLayout>

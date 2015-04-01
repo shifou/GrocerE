@@ -97,5 +97,7 @@ public class MainMenu extends ActionBarActivity {
 
     public void closeApplication(View view) {
         System.exit(0);
+        finish();
+
     }
 }
