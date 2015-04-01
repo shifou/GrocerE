@@ -6,8 +6,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="edu.team7_18842cmu.grocere.ChangeStores"
-    android:background="@android:color/black"
+    tools:context="edu.team7_18842cmu.activities.ChangeStores"
+    android:background="@color/royalblue"
     android:orientation="vertical">
 
     <CheckBox android:id="@+id/store1checkbox"

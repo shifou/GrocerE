@@ -1,4 +1,4 @@
-package edu.team7_18842cmu.grocere;
+package edu.team7_18842cmu.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

@@ -1,11 +1,10 @@
-package edu.team7_18842cmu.grocere;
+package edu.team7_18842cmu.activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -23,12 +22,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.team7_18842cmu.dbutil.DBManager;
+import edu.team7_18842cmu.model.ItemInfo;
+
 
 public class SubmitPrice extends ActionBarActivity {
-
+    private DBManager dbm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dbm = new DBManager(this);
         setContentView(R.layout.activity_submit_price);
         Button button1 = (Button)findViewById(R.id.submitbutton);
 
@@ -76,7 +79,7 @@ public class SubmitPrice extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class DatePickerFragment extends DialogFragment
+    private class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
         @Override
@@ -109,35 +112,47 @@ public class SubmitPrice extends ActionBarActivity {
 
 
     public void submitPrice(View view) {
+
         final EditText item = (EditText) findViewById(R.id.editText1);
         String missing_fields = checkForm();
-        if(!missing_fields.isEmpty()){
-            new AlertDialog.Builder(this)
-                    .setTitle("Error")
-                    .setMessage("The following fields are required:\n" + missing_fields)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // continue
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        } else {
+        if (!missing_fields.isEmpty()) {
+//            EditText item = (EditText) findViewById(R.id.editText1);
+            EditText quantity = (EditText) findViewById(R.id.editText2);
+            Spinner store = (Spinner) findViewById(R.id.spinner1);
+            EditText price = (EditText) findViewById(R.id.editText4);
+            TextView date = (TextView) findViewById(R.id.editText6);
+            final ItemInfo itemInfo = new ItemInfo(item.getText().toString(), price.getText().toString(),
+                    store.getSelectedItem().toString(), date.getText().toString(), quantity.getText().toString());
+            if (itemInfo.checkForm()) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Error")
+                        .setMessage("The following fields are required:\n" + missing_fields)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            } else {
 
-            new AlertDialog.Builder(this)
-                    .setTitle("Status Message")
-                    .setMessage("Price submitted!\n\nItem: " + item.getText())
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // continue
-                            clearForm();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+                new AlertDialog.Builder(this)
+                        .setTitle("Status Message")
+                        .setMessage("Price submitted!\n\nItem: " + item.getText())
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                dbm.insert("priceInfo", itemInfo.getAttributes());
+                                clearForm();
+                                dbm.queryTest();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+
+
         }
-
-
     }
 
     public String checkForm() {
