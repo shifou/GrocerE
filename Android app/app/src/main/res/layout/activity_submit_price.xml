@@ -152,6 +152,6 @@
         android:layout_marginTop="32dp"
         android:background="#ff00ff00"
         android:theme="@style/Base.TextAppearance.AppCompat.Large.Inverse"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"  />
 
 </RelativeLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:padding="8dp">
+
+    <LinearLayout android:id="@+id/FirstRow"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dip"
+        >
+
+        <TextView
+            android:id="@+id/ItemName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:gravity="left"
+            android:textSize="20dip"
+            android:textColor="@android:color/black"
+            android:text="Apples"
+            />
+        <TextView
+            android:id="@+id/ItemSize"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:gravity="center"
+            android:textSize="14dip"
+            android:textColor="@android:color/black"
+            android:text="1 lb"
+            />
+        <TextView
+            android:id="@+id/ItemPrice"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:gravity="right"
+            android:textSize="20dip"
+            android:textColor="@android:color/black"
+            android:text="$1.99"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/SecondRow"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dip"
+        android:layout_below="@+id/FirstRow"
+        >
+
+        <TextView
+            android:id="@+id/ItemStore"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="left"
+            android:textSize="14dip"
+            android:textColor="@android:color/black"
+            android:text="Giant Eagle"
+            />
+        <TextView
+            android:id="@+id/ItemDate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="right"
+            android:textSize="14dip"
+            android:textColor="@android:color/black"
+            android:text="03/14/2015"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout >

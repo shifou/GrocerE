@@ -3,7 +3,9 @@ package edu.team7_18842cmu.dbutil;
 /**
  * Created by Michael-Gao on 2015/3/29.
  */
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -11,12 +13,18 @@ import java.util.Objects;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import edu.team7_18842cmu.StoredItem;
 
 
 public class DBManager {
     private DBHelper helper;
     private SQLiteDatabase db;
+
+
 
     public DBManager(Context context) {
         helper = new DBHelper(context);
@@ -81,16 +89,60 @@ public class DBManager {
         Cursor c = db.rawQuery("SELECT * FROM priceInfo", null);
 
         while (c.moveToNext()) {
-            String s = "";
-            s = s + "No."+ Integer.toString(c.getInt(c.getColumnIndex("_id"))) + " ";
-            s = s + "Item Name:" + c.getString(c.getColumnIndex("itemName"))+ " ";
-            s = s + "Item Price:" + c.getString(c.getColumnIndex("itemPrice"))+ " ";
-            s = s + "Item Quantity" + c.getString(c.getColumnIndex("itemQuantity"))+ " ";
-            s = s + "Store" + c.getString(c.getColumnIndex("store"))+ " ";
-            s = s + "Purchase Date" + c.getString(c.getColumnIndex("purchaseDate"))+ " ";
-            System.out.println(s);
+           String s = rowToString(c);
+            Log.d("GrocerE", s );
         }
         c.close();
+    }
+
+    // Locate item names in the database and return all matches
+    public String[] locateItem(String query) {
+        Cursor c = db.rawQuery("SELECT * FROM priceInfo", null);
+        int numRows = (int) DatabaseUtils.queryNumEntries(db, "priceInfo");
+        String temp[] = new String[numRows];
+        int j = 0;
+
+        while (c.moveToNext()){
+            String name = c.getString(c.getColumnIndex("itemName")).toLowerCase();
+            if (name.contains(query.toLowerCase())) {
+                temp[j] = rowToString(c);
+                j++;
+            }
+        }
+
+        String answer[] = new String[j];
+        for(int i = 0; i < j; i++)
+            answer[i] = temp[i];
+        return answer;
+    }
+
+    // Convert a row in the item database to a string
+    public String rowToString(Cursor c) {
+        String s = "";
+        s += "No."+ Integer.toString(c.getInt(c.getColumnIndex("_id")));
+        s += " Item Name:" + c.getString(c.getColumnIndex("itemName"));
+        s += " Item Price:" + c.getString(c.getColumnIndex("itemPrice"));
+        s += " Item Quantity:" + c.getString(c.getColumnIndex("itemQuantity"));
+        s += " Store:" + c.getString(c.getColumnIndex("store"));
+        s += " Purchase Date:" + c.getString(c.getColumnIndex("purchaseDate"));
+        return s;
+    }
+
+    public StoredItem rowToEntry(Cursor c) {
+        StoredItem item = new StoredItem();
+        item.itemName = c.getString(c.getColumnIndex("itemName"));
+        item.itemSize = c.getString(c.getColumnIndex("itemQuantity"));
+        item.itemStore = c.getString(c.getColumnIndex("store"));
+
+        String price = c.getString(c.getColumnIndex("itemPrice"));
+        item.itemPrice = new BigDecimal(price);
+
+        String date = c.getString(c.getColumnIndex("purchaseDate"));
+        item.purchaseDate = new Date(date);
+
+
+        return item;
+
     }
 
     /**
@@ -100,3 +152,5 @@ public class DBManager {
         db.close();
     }
 }
+
+
