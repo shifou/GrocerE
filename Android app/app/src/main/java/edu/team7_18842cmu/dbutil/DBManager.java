@@ -8,14 +8,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import edu.team7_18842cmu.StoredItem;
 
@@ -85,50 +82,47 @@ public class DBManager {
      * query all items
      * @return List<String>
      */
-    public void queryTest() {
-        Cursor c = db.rawQuery("SELECT * FROM priceInfo", null);
-
-        while (c.moveToNext()) {
-           String s = rowToString(c);
-            Log.d("GrocerE", s );
-        }
-        c.close();
-    }
+//    public void queryTest() {
+//        Cursor c = db.rawQuery("SELECT * FROM priceInfo", null);
+//
+//        while (c.moveToNext()) {
+//           String s = rowToString(c);
+//            Log.d("GrocerE", s );
+//        }
+//        c.close();
+//    }
 
     // Locate item names in the database and return all matches
-    public String[] locateItem(String query) {
+    public List<StoredItem> locateItem(String query) {
         Cursor c = db.rawQuery("SELECT * FROM priceInfo", null);
         int numRows = (int) DatabaseUtils.queryNumEntries(db, "priceInfo");
-        String temp[] = new String[numRows];
-        int j = 0;
+        List<StoredItem> results = new ArrayList<StoredItem>();
+        int answerCount = 0;
 
         while (c.moveToNext()){
             String name = c.getString(c.getColumnIndex("itemName")).toLowerCase();
             if (name.contains(query.toLowerCase())) {
-                temp[j] = rowToString(c);
-                j++;
+                results.add(answerCount, rowToObject(c));
+                answerCount++;
             }
         }
-
-        String answer[] = new String[j];
-        for(int i = 0; i < j; i++)
-            answer[i] = temp[i];
-        return answer;
+        return results;
     }
 
     // Convert a row in the item database to a string
-    public String rowToString(Cursor c) {
-        String s = "";
-        s += "No."+ Integer.toString(c.getInt(c.getColumnIndex("_id")));
-        s += " Item Name:" + c.getString(c.getColumnIndex("itemName"));
-        s += " Item Price:" + c.getString(c.getColumnIndex("itemPrice"));
-        s += " Item Quantity:" + c.getString(c.getColumnIndex("itemQuantity"));
-        s += " Store:" + c.getString(c.getColumnIndex("store"));
-        s += " Purchase Date:" + c.getString(c.getColumnIndex("purchaseDate"));
-        return s;
-    }
+//    public String rowToString(Cursor c) {
+//        String s = "";
+//        s += "No."+ Integer.toString(c.getInt(c.getColumnIndex("_id")));
+//        s += " Item Name:" + c.getString(c.getColumnIndex("itemName"));
+//        s += " Item Price:" + c.getString(c.getColumnIndex("itemPrice"));
+//        s += " Item Quantity:" + c.getString(c.getColumnIndex("itemQuantity"));
+//        s += " Store:" + c.getString(c.getColumnIndex("store"));
+//        s += " Purchase Date:" + c.getString(c.getColumnIndex("purchaseDate"));
+//        return s;
+//    }
 
-    public StoredItem rowToEntry(Cursor c) {
+    // This converts a row in the database to a StoredItem object
+    public StoredItem rowToObject(Cursor c) {
         StoredItem item = new StoredItem();
         item.itemName = c.getString(c.getColumnIndex("itemName"));
         item.itemSize = c.getString(c.getColumnIndex("itemQuantity"));

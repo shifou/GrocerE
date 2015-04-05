@@ -1,6 +1,9 @@
 package edu.team7_18842cmu;
 
+import android.text.format.DateFormat;
+
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -37,7 +40,7 @@ public class StoredItem {
     }
 
     public String getItemSize() {
-        return itemName;
+        return itemSize;
     }
 
     public void setItemPrice(BigDecimal price){

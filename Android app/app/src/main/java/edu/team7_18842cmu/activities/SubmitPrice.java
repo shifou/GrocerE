@@ -141,7 +141,7 @@ public class SubmitPrice extends ActionBarActivity {
                             // continue
                             dbm.insert("priceInfo", itemInfo.getAttributes());
                             clearForm();
-                            dbm.queryTest();
+//                            dbm.queryTest();
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)

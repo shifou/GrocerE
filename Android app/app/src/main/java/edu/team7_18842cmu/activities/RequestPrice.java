@@ -13,7 +13,11 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import java.util.List;
+
+import edu.team7_18842cmu.StoredItem;
 import edu.team7_18842cmu.dbutil.DBManager;
+import edu.team7_18842cmu.model.AnswerAdapter;
 
 
 public class RequestPrice extends ActionBarActivity {
@@ -53,7 +57,9 @@ public class RequestPrice extends ActionBarActivity {
 
     public void requestPrice(View view) {
         final EditText item = (EditText) findViewById(R.id.editText5);
+
         if(item.getText().toString().trim().length() == 0){
+
             new AlertDialog.Builder(this)
                     .setTitle("Error")
                     .setMessage("You must submit an item name.")
@@ -65,35 +71,14 @@ public class RequestPrice extends ActionBarActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         } else {
-            String[] results;
+
+            List<StoredItem> results;
             results = dbm.locateItem(item.getText().toString());
             item.setText("");
 
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, results);
+            ListAdapter adapter = new AnswerAdapter(this,results);
             ListView listView = (ListView) findViewById(R.id.answerList);
             listView.setAdapter(adapter);
-
-//            new AlertDialog.Builder(this)
-//                    .setTitle("Status Message")
-//                    .setMessage("Price requested!\n\nItem: " + item.getText())
-//                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            // continue
-//
-//
-////                            dbm.queryTest();
-//                            String[] results;
-//                            results = dbm.locateItem(item.getText().toString());
-//                            item.setText("");
-//                            for(int i = 0; i < results.length; i++)
-//                                Log.d("GrocerE", results[i]);
-//
-//                        }
-//                    })
-//                    .setIcon(android.R.drawable.ic_dialog_alert)
-//                    .show();
-
 
         }
     }
