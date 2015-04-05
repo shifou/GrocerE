@@ -4,55 +4,59 @@ package server
 
 import (
 	"bufio"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 	"fmt"
 	"net"
 	"strconv"
 )
 
 type serverNode struct {
-	flag   bool
-	quit   chan int
-	qu     chan string
-	remove chan int
-	ct     chan int
-	ls     net.Listener
+	quit chan int
+	ls   net.Listener
+	ct   int
+	flag bool
 }
 
 // New creates and returns (but does not start) a new serverNode.
 func New() Server {
 	mes := new(serverNode)
-	mes.flag = false
 	mes.quit = make(chan int)
-	mes.qu = make(chan string)
-	mes.remove = make(chan int)
-	mes.ct = make(chan int, 1)
-	mes.clients = make(map[int]client)
 	mes.ls = nil
-	mes.ct <- 1
+	flag = false
 	return mes
 }
 
-func handle(mes *multiEchoServer, idd int, con net.Conn) {
-
+func handle(mes *serverNode, con net.Conn) {
+	var wr = bufio.NewWriter(con)
+	var re = bufio.NewReader(con)
+	var rebuf = [2000]byte
+	num, err:= re.Read(rebuf[0:])
+	if err != nil {
+		return fmt.Errorf("read buf error: ", err, "\n")
+	}
 }
 func (mes *serverNode) Start(port int) error {
-	if mes.flag == true {
-		return fmt.Errorf("the Server has already started\n")
-	}
 	ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
 		return fmt.Errorf("Error on listen: ", err, "\n")
 	}
 	mes.ls = ln
-	mes.flag = true
+	flag = true
 	fmt.Println("begin")
 	go func() {
 		for {
 			//fmt.Println("Waiting for a connection via Accept:",connNumber)
-			conn, err := ln.Accept()
-			if err == nil {
-				go handle(mes, conn)
-
+			select {
+			case <-mes.quit:
+				Close()
+				fmt.Errorf("Close the Server\n")
+				return
+				// wait for the new client
+			case conn, err := ln.Accept():
+				if err == nil {
+					go handle(mes, conn)
+				}
 			}
 		}
 		fmt.Println("exit waiting client")
@@ -62,14 +66,5 @@ func (mes *serverNode) Start(port int) error {
 }
 
 func (mes *serverNode) Close() {
-	select {
-	case <-mes.ct:
-		for _, v := range mes.clients {
-			v.conn.Close()
-		}
-		mes.ct <- 1
-	}
-	mes.ls.Close()
-	mes.quit <- 0
-	mes.flag = false
+
 }
