@@ -25,7 +25,7 @@ public class Multicast {
     private static String clockOption;
     private static String processName;
 
-    static MessagePasser msgPasser = null;
+    static MessagePasserX msgPasser = null;
     //static ClockService clock = null;
 
     static ArrayList<Group> groupList;
@@ -84,7 +84,7 @@ public class Multicast {
                 {
                     //System.out.println("Starting...");
                     //C:\\Users\\Srinath\\Dropbox\\CMU\\4) DS\\Homeworks\\Lab 0\\config.txt
-                    msgPasser = new MessagePasser(configFile,processName,clockOption);
+                    msgPasser = new MessagePasserX(configFile,processName,clockOption);
 
                     //Start multicast loop
                     thread = new Thread(new MulticastReceiveLoop());

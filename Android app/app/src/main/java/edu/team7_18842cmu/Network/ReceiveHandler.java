@@ -15,11 +15,11 @@ import java.util.Queue;
 public class ReceiveHandler implements Runnable{
 
     private Socket client;
-    MessagePasser MP;
+    MessagePasserX MP;
     ObjectInputStream IS;
     HostWithSocketAndStream hostTemp;
 
-    public ReceiveHandler(Socket client, MessagePasser MP)
+    public ReceiveHandler(Socket client, MessagePasserX MP)
     {
         this .client = client;
         this.MP = MP;
