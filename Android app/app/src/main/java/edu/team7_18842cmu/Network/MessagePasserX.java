@@ -12,9 +12,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -464,59 +466,74 @@ public class MessagePasserX
     void loadConfigFile()
     {
         //update modification time
-        File configFile = new File(configFileName);
-        lastModifyTime = configFile.lastModified();
+        //TODO: Changed here...just for reference
+        //File configFile = new File(configFileName);
+        //lastModifyTime = configFile.lastModified();
+
+
         //clear rule set
         currentRuleSet.clear();
-        InputStream input;
+        InputStream input = null;
+        //TODO: changed here
+        //input = new FileInputStream(configFile);
+
         try {
-            input = new FileInputStream(configFile);
-            Yaml yaml = new Yaml();
-            @SuppressWarnings("unchecked")
-            Map<String, ArrayList> data = (LinkedHashMap<String, ArrayList>) yaml.load(input);
+            input = (InputStream) new URL(configFileName).getContent();
+        }
+        catch (MalformedURLException e)
+        {
+            System.out.println("Config URL Malformed");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        {
 
-            for(Entry<String, ArrayList> entry: data.entrySet() )
-            {
-                if(entry.getKey().equalsIgnoreCase("configuration")){
+        }
+        Yaml yaml = new Yaml();
+        @SuppressWarnings("unchecked")
+        Map<String, ArrayList> data = (LinkedHashMap<String, ArrayList>) yaml.load(input);
 
-                    ArrayList array = entry.getValue();
-                    for(Object obj: array){
-                        Map<String, Object> map = (LinkedHashMap<String, Object>) obj;
+        for(Entry<String, ArrayList> entry: data.entrySet() )
+        {
+            if(entry.getKey().equalsIgnoreCase("configuration")){
+
+                ArrayList array = entry.getValue();
+                for(Object obj: array){
+                    Map<String, Object> map = (LinkedHashMap<String, Object>) obj;
 
 
-                        HostWithSocketAndStream host = new HostWithSocketAndStream((String)map.get("name"),(String)map.get("ip"),(Integer)map.get("port"));
-                        listOfEverything.add(host);
-                    }
-                }
-                else if(entry.getKey().equalsIgnoreCase("sendRules")){
-                    ArrayList array = entry.getValue();
-                    for(Object obj: array){
-                        Map<String, Object> map = (LinkedHashMap<String, Object>) obj;
-                        //Rule Initialization
-                        Rule rule = new Rule("send", (String)map.get("action"),
-                                (String)map.get("src"), (String)map.get("dest"),
-                                (String)map.get("kind"),
-                                (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                                (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
-                        currentRuleSet.add(rule);
-                    }
-                }
-                else if(entry.getKey().equalsIgnoreCase("receiveRules")){
-                    ArrayList array = entry.getValue();
-                    for(Object obj: array){
-                        Map<String, Object> map = (LinkedHashMap<String, Object>) obj;
-                        //Rule Initialization
-                        Rule rule = new Rule("receive", (String)map.get("action"),
-                                (String)map.get("src"), (String)map.get("dest"),
-                                (String)map.get("kind"),
-                                (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                                (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
-                        currentRuleSet.add(rule);
-                    }
+                    HostWithSocketAndStream host = new HostWithSocketAndStream((String)map.get("name"),(String)map.get("ip"),(Integer)map.get("port"));
+                    listOfEverything.add(host);
                 }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            else if(entry.getKey().equalsIgnoreCase("sendRules")){
+                ArrayList array = entry.getValue();
+                for(Object obj: array){
+                    Map<String, Object> map = (LinkedHashMap<String, Object>) obj;
+                    //Rule Initialization
+                    Rule rule = new Rule("send", (String)map.get("action"),
+                            (String)map.get("src"), (String)map.get("dest"),
+                            (String)map.get("kind"),
+                            (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
+                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                    currentRuleSet.add(rule);
+                }
+            }
+            else if(entry.getKey().equalsIgnoreCase("receiveRules")){
+                ArrayList array = entry.getValue();
+                for(Object obj: array){
+                    Map<String, Object> map = (LinkedHashMap<String, Object>) obj;
+                    //Rule Initialization
+                    Rule rule = new Rule("receive", (String)map.get("action"),
+                            (String)map.get("src"), (String)map.get("dest"),
+                            (String)map.get("kind"),
+                            (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
+                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                    currentRuleSet.add(rule);
+                }
+            }
         }
         System.out.println("Current rules set is: ");
         for(Rule rule: currentRuleSet){
