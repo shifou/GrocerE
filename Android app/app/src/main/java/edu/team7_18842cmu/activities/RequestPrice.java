@@ -1,7 +1,9 @@
 package edu.team7_18842cmu.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.widget.ListView;
 
 import java.util.List;
 
+import edu.team7_18842cmu.Network.Message;
+import edu.team7_18842cmu.NetworkService.MessagePasserService;
 import edu.team7_18842cmu.StoredItem;
 import edu.team7_18842cmu.dbutil.DBManager;
 import edu.team7_18842cmu.model.AnswerAdapter;
@@ -22,6 +26,7 @@ import edu.team7_18842cmu.model.AnswerAdapter;
 
 public class RequestPrice extends ActionBarActivity {
     private DBManager dbm;
+    MessagePasserService msgPasserService = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +34,9 @@ public class RequestPrice extends ActionBarActivity {
         setContentView(R.layout.activity_request_price);
 
         Button button1 = (Button)findViewById(R.id.requestbutton);
+
+        msgPasserService = (MessagePasserService)this.getIntent().getSerializableExtra("messagePasser");
+
 
         button1.setOnClickListener(
                 new Button.OnClickListener() {
@@ -80,6 +88,17 @@ public class RequestPrice extends ActionBarActivity {
             ListView listView = (ListView) findViewById(R.id.answerList);
             listView.setAdapter(adapter);
 
+
+//            Intent newIntent = new Intent(RequestPrice.this, MessagePasserService.class);
+//            newIntent.putExtra("functionName","send");
+            Message newMessage = new Message ("N2", "Request", item.getText().toString());
+//            newIntent.putExtra("messageObject",newMessage);
+//            startService(newIntent);
+            try {
+                msgPasserService.getMsgPasser().send(newMessage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
