@@ -11,20 +11,27 @@ const defaultPort = 9999
 
 func main() {
 	// Initialize the server.
-	db, err := sql.Open("sqlite3", "./data.db")
+	db, err := sql.Open("sqlite3", "./user_data.db")
 	if err != nil {
-
-		sqlStmt := `
-		create table foo (id integer not null primary key, name text);
-		delete from foo;
-		`
+		sqlStmt := `create table users (Mid text primary key, Ipaddr text, Port Integer, Stores text);`
 		_, err = db.Exec(sqlStmt)
 		if err != nil {
-			log.Printf("%q: %s\n", err, sqlStmt)
+			fmt.Printf("%q: %s\n", err, sqlStmt)
 			return
 		}
 	}
-	defer db.Close()
+	db.Close()
+
+	db2, err := sql.Open("sqlite3", "./store_data.db")
+	if err != nil {
+		sqlStmt := `create table stores (Name text primary key, List text);`
+		_, err = db2.Exec(sqlStmt)
+		if err != nil {
+			fmt.Printf("%q: %s\n", err, sqlStmt)
+			return
+		}
+	}
+	db2.Close()
 
 	ser := server.New()
 	if ser == nil {
@@ -33,7 +40,7 @@ func main() {
 	}
 
 	// Start the server and continue listening for client connections in the background.
-	if err := server.Start(defaultPort); err != nil {
+	if err := ser.Start(defaultPort); err != nil {
 		fmt.Printf("Server could not be started: %s\n", err)
 		return
 	}

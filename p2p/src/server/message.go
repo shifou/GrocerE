@@ -13,15 +13,16 @@ const (
 
 // Message represents a message used by the LSP protocol.
 type Message struct {
-	Type   MsgType  // One of the message types listed above.
-	Ipaddr string   // Unique client-server connection ID.
-	Port   int      // Message sequence number.
-	Peers  []string // Data message payload.
+	Type   MsgType // One of the message types listed above.
+	Mid    string
+	Ipaddr string // Unique client-server connection ID.
+	Port   int    // Message sequence number.
+	Peers  string // Data message payload.
 }
 
 // NewData returns a new data message with the specified connection ID,
 // sequence number, and payload.
-func NewReply(ip string, pt int, peers []string) *Message {
+func NewReply(ip string, pt int, peers string) *Message {
 	return &Message{
 		Type:   MsgReply,
 		Ipaddr: ip,
@@ -35,19 +36,19 @@ func NewReply(ip string, pt int, peers []string) *Message {
 //     msg := NewConnect()
 //     fmt.Printf("Connect message: %s\n", msg)
 func (m *Message) String() string {
-	var name
-	payload string[]
+	var name, payload string
 	switch m.Type {
 	case MsgLogin:
 		name = "Login"
+		payload = m.Mid
 	case MsgQuery:
 		name = "query"
-		payload = " " + string(m.Peers)
+		payload = " " + m.Peers
 	case MsgReply:
 		name = "reply"
-		payload = " " + string(m.Peers)
+		payload = " " + m.Peers
 	case MsgExit:
 		name = "Exit"
 	}
-	return fmt.Sprintf("[%s %s %d%s]", name, m.ipaddr, m.port, payload)
+	return fmt.Sprintf("[%s %s %d %s]", name, m.Ipaddr, m.Port, payload)
 }
