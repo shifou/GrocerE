@@ -4,7 +4,7 @@ package server
 
 import (
 	"bufio"
-	//"database/sql"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
@@ -26,9 +26,22 @@ type Store struct {
 	List string
 }
 
+var dbU *sql.DB
+var dbS *sql.DB
 var logger *log.Logger
 
-func checkErr(sql string, err error) {
+func checkConError(err error) int {
+	if err != nil {
+		if err.Error() == "EOF" {
+			fmt.Println("client exit")
+			return 0
+		}
+		log.Fatal("an error!", err.Error())
+		return -1
+	}
+	return 1
+}
+func checkDbErr(sql string, err error) {
 	if err != nil {
 		logger.Panic(err)
 	} else {
@@ -54,6 +67,30 @@ func New() Server {
 	logger = log.New(logFile, "[INFO]", log.Lshortfile)
 	logger.SetFlags(logger.Flags() | log.LstdFlags)
 	logger.Println("==========start===========")
+
+	var dberr error
+	dbU, dberr = sql.Open("sqlite3", "./user_data.db")
+	if dberr != nil || dbU == nil {
+		fmt.Println(dberr)
+		return nil
+	}
+	errr := dbU.Ping()
+	if errr != nil {
+		log.Fatalf("Error on opening user database connection: %s", err.Error())
+	}
+	defer dbU.Close()
+
+	dbS, dberr = sql.Open("sqlite3", "./store_data.db")
+	if dberr != nil || dbS == nil {
+		fmt.Println(dberr)
+		return nil
+	}
+	errr = dbS.Ping()
+	if errr != nil {
+		log.Fatalf("Error on opening user database connection: %s", err.Error())
+	}
+	defer dbS.Close()
+
 	mes := new(serverNode)
 	mes.quit = make(chan int)
 	mes.ls = nil
@@ -67,15 +104,23 @@ func handle(mes *serverNode, con net.Conn) {
 	var rebuf [2000]byte
 	for {
 		num, err := re.Read(rebuf[0:])
-
-		if err != nil {
-			fmt.Errorf("read buf error: ", err, "\n")
-			return
+		flag := checkConError(err)
+		if flag == 0 {
+			break
 		}
 		msg := &Message{}
 		err = json.Unmarshal(rebuf[0:num], msg)
 		if err == nil {
 			fmt.Println("###Client ###: :received" + msg.String())
+			switch msg.Type {
+			case MsgLogin:
+
+			case MsgQuery:
+			case MsgReply:
+			case MsgExit:
+			default:
+				fmt.Println("unknow query type name")
+			}
 		} else {
 			fmt.Print(string(rebuf[:]))
 		}

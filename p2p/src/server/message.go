@@ -14,10 +14,10 @@ const (
 // Message represents a message used by the LSP protocol.
 type Message struct {
 	Type   MsgType // One of the message types listed above.
-	Mid    string
-	Ipaddr string // Unique client-server connection ID.
-	Port   int    // Message sequence number.
-	Peers  string // Data message payload.
+	Mid    string  // mobile device
+	Ipaddr string  // ip addr.
+	Port   int     // port.
+	Peers  string  // peer list.
 }
 
 // NewData returns a new data message with the specified connection ID,
