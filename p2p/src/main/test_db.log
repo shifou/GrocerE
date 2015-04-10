@@ -1,6 +1,5 @@
-[INFO]2015/04/05 01:46:24 test_db.go:40: ==========start===========
-[INFO]2015/04/05 01:46:24 test_db.go:28: exec:  drop table users;create table users (userId integer, uname text);
-[INFO]2015/04/05 01:46:24 test_db.go:28: exec:  insert into users(userId,uname) values(1,'Mike');
-[INFO]2015/04/05 01:46:24 test_db.go:28: exec:  insert into users(userId,uname) values(2,'Mike');
-[INFO]2015/04/05 01:46:24 test_db.go:28: exec:  insert into users(userId,uname) values(3,'MMMMMMMike');
-[INFO]2015/04/05 01:46:24 test_db.go:28: exec:  select * from users;
+[INFO]2015/04/06 17:43:46 test_db.go:41: ==========start===========
+[INFO]2015/04/06 17:43:46 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(1,'127.0.0.1',80,"Giant Eagle,Best Buy");
+[INFO]2015/04/06 17:43:46 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(22,'127.0.0.44',80,"Giant Eagle,Best Buy");
+[INFO]2015/04/06 17:43:46 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(2555,'127.0.0.55',80,"ABC,DEF");
+[INFO]2015/04/06 17:43:46 test_db.go:29: exec:  select * from users;
