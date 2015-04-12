@@ -20,7 +20,7 @@ func main() {
 			return
 		}
 	}
-	db.Close()
+	defer db.Close()
 
 	db2, err := sql.Open("sqlite3", "./store_data.db")
 	if err != nil {
@@ -31,7 +31,7 @@ func main() {
 			return
 		}
 	}
-	db2.Close()
+	defer db2.Close()
 
 	ser := server.New()
 	if ser == nil {
