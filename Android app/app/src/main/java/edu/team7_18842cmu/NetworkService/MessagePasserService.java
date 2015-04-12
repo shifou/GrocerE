@@ -11,35 +11,41 @@ import edu.team7_18842cmu.Network.Message;
 import edu.team7_18842cmu.Network.MessagePasserX;
 
 //public class MessagePasserService extends IntentService {
-public class MessagePasserService extends IntentService {
+public class MessagePasserService extends Service {
 
-    public MessagePasserService() {
-        super("MessagePasserService");
-    }
+    private static String configFile;
+    private static String clockOption;
+    private static String nodeName;
+    static MessagePasserX msgPasser;
+
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        System.out.println("Handling the Intent");
-
-        if (!started) {
-            configFile = "http://pastebin.com/raw.php?i=whdf6rBa";
-            clockOption = "vector";
-            nodeName = "nodeName";
-            try {
-                msgPasser = new MessagePasserX(configFile, nodeName, clockOption);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            started = true;
+    public void onCreate() {
+        // The service is being created
+System.out.println("DODODODODO");
+                //TODO: Init message passer here
+        configFile = "http://pastebin.com/raw.php?i=whdf6rBa";
+        clockOption = "vector";
+        nodeName = "nodeName";
+        try {
+            msgPasser = new MessagePasserX(configFile,nodeName,clockOption);
+            System.out.println("Made a new message passer");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // The service is starting, due to a call to startService()
 
-        String function = intent.getStringExtra("functionName");
-        String item = intent.getStringExtra("itemRequest");
+               String function = intent.getStringExtra("functionName");
+       String item = intent.getStringExtra("itemRequest");
 
-        if (function != null) {
-            if (function.equals(new String("send"))) {
+        if(function != null) {
+            if (function.equals(new String("send")))
+            {
                 //Get send params from intent
-                Message msg = new Message("N2", "Request", item);
+                Message msg = new Message ("N2", "Request", item);
 //                Message msg = (Message) intent.getSerializableExtra("messageObject");
                 System.out.println("Destination Node Name" + msg.getDestinationNodeName());
                 System.out.println("Query: " + item);
@@ -49,10 +55,13 @@ public class MessagePasserService extends IntentService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (function.equals(new String("receive"))) {
+            }
+            else if (function.equals(new String("receive")))
+            {
                 Message recvMsg = msgPasser.receive();
-                if (recvMsg != null) {
-                    System.out.println("The next received message is: (" + (String) recvMsg.getDestinationNodeName() + "," + (String) recvMsg.getMessageType());
+                if (recvMsg!=null)
+                {
+                    System.out.println("The next received message is: ("+ (String)recvMsg.getDestinationNodeName()+","+ (String) recvMsg.getMessageType());
                     String callingActivity = intent.getStringExtra("callingActivity");
 
                     //Get the class name of the sender
@@ -67,132 +76,30 @@ public class MessagePasserService extends IntentService {
                     //Note: this will fail if the above catch is triggered
                     //TODO: have receivers listen to this
                     //TODO: pretty sure this is already an explicit intent. but need to verify
-                    Intent replyIntent = new Intent(this, callerClass);
+                    Intent replyIntent = new Intent(this,callerClass);
                     startActivity(replyIntent);
-                } else {
+                }
+                else
+                {
                     System.out.println("No message to receive...");
                 }
             }
-
+            return 0;
         }
 
-
+      return -1;
     }
-
-
-
-
-    public  MessagePasserX getMsgPasser() {
-        return msgPasser;
-    }
-
-    static MessagePasserX msgPasser = null;
-
-    private static String configFile;
-    private static String clockOption;
-    private static String nodeName;
-    private Boolean started = false;
-
-
 
 
     @Override
-    public IBinder onBind(Intent intent)
-    {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+    public IBinder onBind(Intent intent) {
+        // A client is binding to the service with bindService()
+        return null;
     }
 
-//    public void onCreate()
-//    {
-//        super.onCreate();
-//
-//        //TODO: Init message passer here
-//        configFile = "http://pastebin.com/raw.php?i=whdf6rBa";
-//        clockOption = "vector";
-//        nodeName = "nodeName";
-//        try {
-//            msgPasser = new MessagePasserX(configFile,nodeName,clockOption);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//    }
 
-    public void onDestroy()
-    {
-        super.onDestroy();
-        //TODO: Exit all connections
+    @Override
+    public void onDestroy() {
+        // The service is no longer used and is being destroyed
     }
-
-//    public int onStartCommand(Intent intent, int flags, int startID)
-//    {
-
-//        if(!started){
-//            configFile = "http://pastebin.com/raw.php?i=whdf6rBa";
-//            clockOption = "vector";
-//            nodeName = "nodeName";
-//            try {
-//                msgPasser = new MessagePasserX(configFile,nodeName,clockOption);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            started = true;
-//        }
-//
-//       String function = intent.getStringExtra("functionName");
-//       String item = intent.getStringExtra("itemRequest");
-//
-//        if(function != null) {
-//            if (function.equals(new String("send")))
-//            {
-//                //Get send params from intent
-//                Message msg = new Message ("N2", "Request", item);
-////                Message msg = (Message) intent.getSerializableExtra("messageObject");
-//                System.out.println("Destination Node Name" + msg.getDestinationNodeName());
-//                System.out.println("Query: " + item);
-//                System.out.println("Msg Payload: " + msg.getPayload());
-//                try {
-//                    msgPasser.send(msg);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            else if (function.equals(new String("receive")))
-//            {
-//                Message recvMsg = msgPasser.receive();
-//                if (recvMsg!=null)
-//                {
-//                    System.out.println("The next received message is: ("+ (String)recvMsg.getDestinationNodeName()+","+ (String) recvMsg.getMessageType());
-//                    String callingActivity = intent.getStringExtra("callingActivity");
-//
-//                    //Get the class name of the sender
-//                    Class callerClass = null;
-//                    try {
-//                        callerClass = Class.forName(callingActivity);
-//                    } catch (ClassNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    //Send an intent back to caller
-//                    //Note: this will fail if the above catch is triggered
-//                    //TODO: have receivers listen to this
-//                    //TODO: pretty sure this is already an explicit intent. but need to verify
-//                    Intent replyIntent = new Intent(this,callerClass);
-//                    startActivity(replyIntent);
-//                }
-//                else
-//                {
-//                    System.out.println("No message to receive...");
-//                }
-//            }
-//            return 0;
-//        }
-//
-//      return -1;
-//    }
-
-
-
 }

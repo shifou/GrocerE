@@ -118,7 +118,7 @@ public class VectorClockService extends ClockService
         try
         {
             semaphore.acquire();
-            this.lamportTimeStamp.set(index, this.lamportTimeStamp.get(index)+1);
+//            this.lamportTimeStamp.set(index, this.lamportTimeStamp.get(index)+1);
             semaphore.release();
         }
         catch (InterruptedException e)
