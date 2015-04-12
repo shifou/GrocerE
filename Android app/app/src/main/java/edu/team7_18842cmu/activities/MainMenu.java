@@ -25,14 +25,17 @@ public class MainMenu extends ActionBarActivity {
         Button button3 = (Button)findViewById(R.id.button3);
         Button button4 = (Button)findViewById(R.id.button4);
 
-        //Network Service Stuff
-        //TODO: start the service
-        //Context context = null;
-//        Intent i = new Intent(getBaseContext(), MessagePasserService.class);
-//        Intent i = new Intent(this, MessagePasserService.class);
-        final MessagePasserService MessagePasser = new MessagePasserService();
-        Intent i = new Intent(MainMenu.this, MessagePasserService.class);
-        startService(i);
+//        //Network Service Stuff
+//        //TODO: start the service
+//        //Context context = null;
+////        Intent i = new Intent(getBaseContext(), MessagePasserService.class);
+////        Intent i = new Intent(this, MessagePasserService.class);
+//        final MessagePasserService MessagePasser = new MessagePasserService();
+//        Intent i = new Intent(MainMenu.this, MessagePasserService.class);
+//        startService(i);
+
+        Intent msgPasserIntent = new Intent(this, MessagePasserService.class);
+        startService(msgPasserIntent);
 
         //TODO: Initialize the service
         //Intent i = new Intent(this, MessagePasserService.class);
@@ -48,7 +51,7 @@ public class MainMenu extends ActionBarActivity {
         button2.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
-                        requestPrice(v,MessagePasser);
+                        requestPrice(v);
                     }
                 }
         );
@@ -101,9 +104,8 @@ public class MainMenu extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void requestPrice(View view, MessagePasserService messagePasser) {
+    public void requestPrice(View view) {
         Intent intent = new Intent(this, RequestPrice.class);
-        intent.putExtra("messagePasser",messagePasser);
         startActivity(intent);
     }
 

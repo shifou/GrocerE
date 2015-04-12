@@ -169,6 +169,7 @@ public class MessagePasserX
         }
 
         //PB: Set seq number and increment
+        System.out.println("Made it to send");
         message.setSeqNum(seqNumGlobal);
         seqNumGlobal++;
         //Set the source name
