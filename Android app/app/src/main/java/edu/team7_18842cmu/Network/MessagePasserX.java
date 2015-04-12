@@ -90,21 +90,21 @@ public class MessagePasserX
 
         //Initialize serverIP the server's address
         InetAddress addr  = InetAddress.getLocalHost();
-        serverIP = addr.getHostAddress().toString();
+        serverIP = addr.getHostAddress();
 
         //Check if Host is Linux machine
-        if (serverIP.startsWith("127", 0))
-        {
-            NetworkInterface netint = NetworkInterface.getByName("eth0");
-            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-            for(InetAddress inetAddress: Collections.list(inetAddresses))
-            {
-                if(inetAddress.getHostAddress().toString().startsWith("128", 0))
-                {
-                    serverIP = inetAddress.getHostAddress().toString();
-                }
-            }
-        }
+//        if (serverIP.startsWith("127", 0))
+//        {
+//            NetworkInterface netint = NetworkInterface.getByName("eth0");
+//            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+//            for(InetAddress inetAddress: Collections.list(inetAddresses))
+//            {
+//                if(inetAddress.getHostAddress().startsWith("128", 0))
+//                {
+//                    serverIP = inetAddress.getHostAddress();
+//                }
+//            }
+//        }
         System.out.println("The hosts IP addr is: " + serverIP);
 
         //Create clocks
@@ -124,7 +124,8 @@ public class MessagePasserX
 
 
         //Initialize serverPort
-        serverPort = this.listOfEverything.get(getIndexOfLocalHost()).port;
+//        serverPort = this.listOfEverything.get(getIndexOfLocalHost()).port;
+        serverPort = 12000;
 
 
         //PB Setup message queues for sending and receiving.
@@ -518,7 +519,8 @@ public class MessagePasserX
                             (String)map.get("src"), (String)map.get("dest"),
                             (String)map.get("kind"),
                             (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                            null);
+//                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
                     currentRuleSet.add(rule);
                 }
             }
@@ -531,7 +533,8 @@ public class MessagePasserX
                             (String)map.get("src"), (String)map.get("dest"),
                             (String)map.get("kind"),
                             (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                            null);
+//                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
                     currentRuleSet.add(rule);
                 }
             }
@@ -585,7 +588,8 @@ public class MessagePasserX
                                 (String)map.get("src"), (String)map.get("dest"),
                                 (String)map.get("kind"),
                                 (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                                (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                                null);
+//                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
                         currentRuleSet.add(rule);
                     }
                 }
@@ -598,7 +602,8 @@ public class MessagePasserX
                                 (String)map.get("src"), (String)map.get("dest"),
                                 (String)map.get("kind"),
                                 (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                                (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                                null);
+//                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
                         currentRuleSet.add(rule);
                     }
                 }
