@@ -96,6 +96,8 @@ public class MessagePasserX
         InetAddress addr  = InetAddress.getLocalHost();
         serverIP = addr.getHostAddress();
 
+        this.serverName = serverIP;
+
         //Check if Host is Linux machine
 //        if (serverIP.startsWith("127", 0))
 //        {
@@ -168,10 +170,10 @@ public class MessagePasserX
     {
         //Check config file for change
         //Reload if changed
-        if(checkConfigFileValidity() == false)
+        /*if(checkConfigFileValidity() == false)
         {
             reloadConfigFile();
-        }
+        }*/
 
         //PB: Set seq number and increment
         System.out.println("Made it to send");
@@ -198,10 +200,10 @@ public class MessagePasserX
         }
         System.out.println("The message's timestamp is: " + message.timestamp.toString());
 
-        Boolean sent = checkSendRule(message);
+        //Boolean sent = checkSendRule(message);
+        sendMessage(message);
 
-
-        if(sent)
+       /* if(sent)
         {
             //check delayed message
             for(Message delayedMessage: this.delayedSendQueue)
@@ -211,9 +213,9 @@ public class MessagePasserX
             }
             //empty the send queue
             this.delayedSendQueue.clear();
-        }
+        }*/
 
-        return sent;
+        return true;
     }
 
     public Message receive()
@@ -221,13 +223,13 @@ public class MessagePasserX
 
         //Check config file for change
         //Reload if changed
-        if(checkConfigFileValidity() == false)
+        /*if(checkConfigFileValidity() == false)
         {
             reloadConfigFile();
 
 
 
-        }
+        }*/
 
 
         //Process a single message waiting in the buffer

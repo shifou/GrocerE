@@ -98,7 +98,7 @@ public class ReceiveHandler implements Runnable{
                     for (int i = 0; i < results.size(); i++) {
                         response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
                     }
-                    Message newMsg = new Message("N2", "Response", response.toString());
+                    Message newMsg = new Message("128.237.174.150", "Response", response.toString());
                     MP.send(newMsg);
                 }
 

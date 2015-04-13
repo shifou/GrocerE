@@ -26,7 +26,7 @@ public class MessagePasserService extends Service {
         dbm = new DBManager(this);
         System.out.println("DODODODODO");
                 //TODO: Init message passer here
-        configFile = "http://pastebin.com/raw.php?i=RbUzgEDX";
+        configFile = "http://pastebin.com/raw.php?i=whdf6rBa";
         clockOption = "vector";
         nodeName = "nodeName";
         try {
