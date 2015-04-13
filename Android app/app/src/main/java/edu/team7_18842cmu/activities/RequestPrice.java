@@ -43,7 +43,11 @@ public class RequestPrice extends ActionBarActivity {
         button1.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
-                        requestPrice(v);
+                        try {
+                            requestPrice(v);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
         );
@@ -99,14 +103,12 @@ public class RequestPrice extends ActionBarActivity {
             extras.putString("functionName", "send");
             newIntent.putExtras(extras);
             startService(newIntent);
-            wait(15000);
-            
-            results = dbm.locateItem(item.getText().toString());
 
 
-            ListAdapter adapter = new AnswerAdapter(this,results);
-            ListView listView = (ListView) findViewById(R.id.answerList);
-            listView.setAdapter(adapter);
+            Thread t = new Thread(new Refresh(item,this));
+            t.start();
+
+
 
 
             item.setText("");
@@ -114,6 +116,26 @@ public class RequestPrice extends ActionBarActivity {
         }
     }
 
+    private class Refresh implements Runnable {
+        private EditText item;
+        private RequestPrice rp;
+        public Refresh(EditText item, RequestPrice rp)
+        {
+            this.item = item;
+            this.rp = rp;
+        }
 
+        @Override
+        public void run()
+        {
+            results = dbm.locateItem(item.getText().toString());
+
+
+            ListAdapter adapter = new AnswerAdapter(rp,results);
+            ListView listView = (ListView) findViewById(R.id.answerList);
+            listView.setAdapter(adapter);
+
+        }
+    }
 }
 

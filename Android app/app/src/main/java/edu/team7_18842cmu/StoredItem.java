@@ -2,6 +2,7 @@ package edu.team7_18842cmu;
 
 import android.text.format.DateFormat;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.Date;
 /**
  * Created by Nick on 4/4/2015.
  */
-public class StoredItem {
+public class StoredItem implements Serializable{
     public String itemName, itemStore, itemSize;
     public BigDecimal itemPrice;
     public Date purchaseDate;
