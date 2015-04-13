@@ -47,7 +47,7 @@ public class MessagePasserService extends Service {
             if (function.equals(new String("send")))
             {
                 //Get send params from intent
-                Message msg = new Message ("N2", "Request", item);
+                Message msg = new Message ("128.237.174.150", "Request", item);
 //                Message msg = (Message) intent.getSerializableExtra("messageObject");
                 System.out.println("Destination Node Name" + msg.getDestinationNodeName());
                 System.out.println("Query: " + item);
