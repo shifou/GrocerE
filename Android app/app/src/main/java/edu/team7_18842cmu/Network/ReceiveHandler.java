@@ -5,6 +5,7 @@ package edu.team7_18842cmu.Network;
  */
 
 import android.content.Context;
+import android.content.Intent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +16,9 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Queue;
 
+import edu.team7_18842cmu.NetworkService.MessagePasserService;
 import edu.team7_18842cmu.StoredItem;
+import edu.team7_18842cmu.activities.RequestPrice;
 import edu.team7_18842cmu.dbutil.DBManager;
 
 public class ReceiveHandler implements Runnable{
@@ -94,12 +97,19 @@ public class ReceiveHandler implements Runnable{
                 if(msg.getMessageType().equals("Request")) {
                     List<StoredItem> results;
                     results = dbm.locateItem((String) msg.getPayload());
-                    StringBuffer response = new StringBuffer();
-                    for (int i = 0; i < results.size(); i++) {
-                        response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
-                    }
-                    Message newMsg = new Message("128.237.174.150", "Response", response.toString());
+//                    StringBuffer response = new StringBuffer();
+//                    for (int i = 0; i < results.size(); i++) {
+//                        response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
+//                    }
+                    Message newMsg = new Message("128.237.174.150", "Response", results);
                     MP.send(newMsg);
+                }
+
+                if(msg.getMessageType().equals("Response")) {
+                    dbm.insertList((List<StoredItem>)msg.getPayload());
+
+
+
                 }
 
             }
