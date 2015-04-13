@@ -51,6 +51,18 @@ public class DBManager {
         }
     }
 
+    public void insertList(List<StoredItem> response){
+        StoredItem[] items = new StoredItem[response.size()];
+        db.beginTransaction();
+        for(int i = 0; i < response.size(); i++) {
+            StoredItem item = response.get(i);
+            items[i] = item;
+        }
+        db.execSQL("INSERT INTO priceInfo VALUES(null, ?, ?, ?, ?, ?)", items);
+    }
+
+
+
     //return a which contains <Store : Price> for the given item
     //the given items might have different types. etc. milk(brand1) price:20 milk(brand2) price:30
     //return a list of the price, can be used to calculate average or median (TBD)

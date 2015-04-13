@@ -27,6 +27,8 @@ import edu.team7_18842cmu.model.AnswerAdapter;
 public class RequestPrice extends ActionBarActivity {
     private DBManager dbm;
     MessagePasserService msgPasserService = null;
+    public List<StoredItem> results = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +65,7 @@ public class RequestPrice extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void requestPrice(View view) {
+    public void requestPrice(View view) throws InterruptedException {
         final EditText item = (EditText) findViewById(R.id.editText5);
 
         if(item.getText().toString().trim().length() == 0){
@@ -80,13 +82,13 @@ public class RequestPrice extends ActionBarActivity {
                     .show();
         } else {
 
-            List<StoredItem> results;
-            results = dbm.locateItem(item.getText().toString());
-
-
-            ListAdapter adapter = new AnswerAdapter(this,results);
-            ListView listView = (ListView) findViewById(R.id.answerList);
-            listView.setAdapter(adapter);
+//            List<StoredItem> results;
+//            results = dbm.locateItem(item.getText().toString());
+//
+//
+//            ListAdapter adapter = new AnswerAdapter(this,results);
+//            ListView listView = (ListView) findViewById(R.id.answerList);
+//            listView.setAdapter(adapter);
 
 
             Intent newIntent = new Intent(RequestPrice.this, MessagePasserService.class);
@@ -97,6 +99,15 @@ public class RequestPrice extends ActionBarActivity {
             extras.putString("functionName", "send");
             newIntent.putExtras(extras);
             startService(newIntent);
+            wait(15000);
+            
+            results = dbm.locateItem(item.getText().toString());
+
+
+            ListAdapter adapter = new AnswerAdapter(this,results);
+            ListView listView = (ListView) findViewById(R.id.answerList);
+            listView.setAdapter(adapter);
+
 
             item.setText("");
 
