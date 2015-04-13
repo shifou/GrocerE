@@ -39,16 +39,17 @@ func (m *Message) String() string {
 	var name, payload string
 	switch m.Type {
 	case MsgLogin:
-		name = "Login"
+		name = "Login type"
 		payload = m.Mid
 	case MsgQuery:
-		name = "query"
+		name = "query type"
 		payload = " " + m.Peers
 	case MsgReply:
-		name = "reply"
+		name = "reply type"
 		payload = " " + m.Peers
 	case MsgExit:
-		name = "Exit"
+		name = "Exit type"
+		payload = ""
 	}
 	return fmt.Sprintf("[%s %s %d %s]", name, m.Ipaddr, m.Port, payload)
 }

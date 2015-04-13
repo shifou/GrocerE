@@ -33,7 +33,7 @@ var logger *log.Logger
 func checkConError(err error) int {
 	if err != nil {
 		if err.Error() == "EOF" {
-			fmt.Println("client exit")
+
 			return 0
 		}
 		log.Fatal("an error!", err.Error())
@@ -70,26 +70,28 @@ func New() Server {
 
 	var dberr error
 	dbU, dberr = sql.Open("sqlite3", "./user_data.db")
+	defer dbU.Close()
 	if dberr != nil || dbU == nil {
 		fmt.Println(dberr)
 		return nil
 	}
-	errr := dbU.Ping()
+	errr := dbU.Begin()
 	if errr != nil {
 		log.Fatalf("Error on opening user database connection: %s", err.Error())
+		return nil
 	}
-	defer dbU.Close()
 
 	dbS, dberr = sql.Open("sqlite3", "./store_data.db")
+	defer dbS.Close()
 	if dberr != nil || dbS == nil {
 		fmt.Println(dberr)
 		return nil
 	}
-	errr = dbS.Ping()
+	errr = dbS.Begin()
 	if errr != nil {
 		log.Fatalf("Error on opening user database connection: %s", err.Error())
+		return nil
 	}
-	defer dbS.Close()
 
 	mes := new(serverNode)
 	mes.quit = make(chan int)
@@ -98,7 +100,7 @@ func New() Server {
 	return mes
 }
 
-func handle(mes *serverNode, con net.Conn) {
+func handle(mes *serverNode, con net.Conn, id int) {
 	//var wr = bufio.NewWriter(con)
 	var re = bufio.NewReader(con)
 	var rebuf [2000]byte
@@ -106,6 +108,7 @@ func handle(mes *serverNode, con net.Conn) {
 		num, err := re.Read(rebuf[0:])
 		flag := checkConError(err)
 		if flag == 0 {
+			fmt.Println("client ", id, " exit")
 			break
 		}
 		msg := &Message{}
@@ -114,9 +117,16 @@ func handle(mes *serverNode, con net.Conn) {
 			fmt.Println("###Client ###: :received" + msg.String())
 			switch msg.Type {
 			case MsgLogin:
-
+				/*
+					stmt, err := dbU.Prepare("INSERT INTO users(Mid, Ipaddr, Port, Stores) values(?,?,?,?)")
+					res, err := stmt.Exec(msg.Mid, msg.Ipaddr, msg.Port, msg.Peers)
+					if err != nil {
+						stmt, err = dbU.Prepare("update users set Ipaddr=?, Port=?, Stores=? where Mid=?")
+						res, err := stmt.Exec(msg.Ipaddr, msg.Port, msg.Peers, msg.Mid)
+						checkDbErr("update users set Ipaddr=?, Port=?, Stores=? where Mid=?", err)
+					}
+				*/
 			case MsgQuery:
-			case MsgReply:
 			case MsgExit:
 			default:
 				fmt.Println("unknow query type name")
@@ -137,6 +147,7 @@ func (mes *serverNode) Start(port int) error {
 	mes.ls = ln
 	mes.flag = true
 	fmt.Println("begin")
+	i := 1
 	go func() {
 		for {
 			//fmt.Println("Waiting for a connection via Accept:",connNumber)
@@ -154,7 +165,8 @@ func (mes *serverNode) Start(port int) error {
 			conn, err := ln.Accept()
 			if err == nil {
 				fmt.Println("received from: " + conn.RemoteAddr().String())
-				go handle(mes, conn)
+				go handle(mes, conn, i)
+				i++
 			}
 		}
 		fmt.Println("exit waiting client")
