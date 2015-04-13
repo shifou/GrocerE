@@ -82,23 +82,24 @@ public class RequestPrice extends ActionBarActivity {
 
             List<StoredItem> results;
             results = dbm.locateItem(item.getText().toString());
-            item.setText("");
+
 
             ListAdapter adapter = new AnswerAdapter(this,results);
             ListView listView = (ListView) findViewById(R.id.answerList);
             listView.setAdapter(adapter);
 
 
-//            Intent newIntent = new Intent(RequestPrice.this, MessagePasserService.class);
+            Intent newIntent = new Intent(RequestPrice.this, MessagePasserService.class);
 //            newIntent.putExtra("functionName","send");
-            Message newMessage = new Message ("N2", "Request", item.getText().toString());
-//            newIntent.putExtra("messageObject",newMessage);
-//            startService(newIntent);
-            try {
-                msgPasserService.getMsgPasser().send(newMessage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            Message newMessage = new Message ("N2", "Request", item.getText().toString());
+            Bundle extras = new Bundle();
+            extras.putString("itemRequest", item.getText().toString());
+            extras.putString("functionName", "send");
+            newIntent.putExtras(extras);
+            startService(newIntent);
+
+            item.setText("");
+
         }
     }
 

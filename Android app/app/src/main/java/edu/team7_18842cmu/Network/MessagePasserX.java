@@ -29,9 +29,12 @@ import java.util.Queue;
 
 import org.yaml.snakeyaml.Yaml;
 
+import edu.team7_18842cmu.dbutil.DBManager;
+
 
 public class MessagePasserX
 {
+    public DBManager dbm;
     //List of all current rules
     ArrayList<Rule> currentRuleSet = new ArrayList<Rule>();
 
@@ -78,10 +81,11 @@ public class MessagePasserX
 
     int randomVarToDealWithGit;
     //TODO: where to deal with proc_name
-    public MessagePasserX(String config_filename, String proc_name, String clockType) throws Exception
+    public MessagePasserX(String config_filename, String proc_name, String clockType, DBManager dbm) throws Exception
     {
         this.clockOption = clockType;
         this.serverName = proc_name;
+        this.dbm = dbm;
 
         // CL Read config file and parse and save the config state
         //YAML stuff here...populate currentRuleSet
@@ -90,21 +94,21 @@ public class MessagePasserX
 
         //Initialize serverIP the server's address
         InetAddress addr  = InetAddress.getLocalHost();
-        serverIP = addr.getHostAddress().toString();
+        serverIP = addr.getHostAddress();
 
         //Check if Host is Linux machine
-        if (serverIP.startsWith("127", 0))
-        {
-            NetworkInterface netint = NetworkInterface.getByName("eth0");
-            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-            for(InetAddress inetAddress: Collections.list(inetAddresses))
-            {
-                if(inetAddress.getHostAddress().toString().startsWith("128", 0))
-                {
-                    serverIP = inetAddress.getHostAddress().toString();
-                }
-            }
-        }
+//        if (serverIP.startsWith("127", 0))
+//        {
+//            NetworkInterface netint = NetworkInterface.getByName("eth0");
+//            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+//            for(InetAddress inetAddress: Collections.list(inetAddresses))
+//            {
+//                if(inetAddress.getHostAddress().startsWith("128", 0))
+//                {
+//                    serverIP = inetAddress.getHostAddress();
+//                }
+//            }
+//        }
         System.out.println("The hosts IP addr is: " + serverIP);
 
         //Create clocks
@@ -124,7 +128,8 @@ public class MessagePasserX
 
 
         //Initialize serverPort
-        serverPort = this.listOfEverything.get(getIndexOfLocalHost()).port;
+//        serverPort = this.listOfEverything.get(getIndexOfLocalHost()).port;
+        serverPort = 12000;
 
 
         //PB Setup message queues for sending and receiving.
@@ -169,6 +174,7 @@ public class MessagePasserX
         }
 
         //PB: Set seq number and increment
+        System.out.println("Made it to send");
         message.setSeqNum(seqNumGlobal);
         seqNumGlobal++;
         //Set the source name
@@ -278,7 +284,7 @@ public class MessagePasserX
         //Receive side:
         //Setup listener thread that populates receive queue
 
-        receiverThread = new Thread(new ReceiveLoop(serverSocket,serverPort,this));
+        receiverThread = new Thread(new ReceiveLoop(serverSocket,serverPort,this, dbm));
         receiverThread.start();
 
         //return;
@@ -295,14 +301,16 @@ public class MessagePasserX
         ServerSocket serverSocket;
         int serverPort;
         MessagePasserX MP;
+        DBManager dbm;
 
 
 
-        public ReceiveLoop(ServerSocket serverSocket, int serverPort,MessagePasserX MP) {
+        public ReceiveLoop(ServerSocket serverSocket, int serverPort,MessagePasserX MP, DBManager dbm) {
             super();
             this.serverSocket = serverSocket;
             this.serverPort = serverPort;
             this.MP = MP;
+            this.dbm = dbm;
         }
 
 
@@ -340,7 +348,7 @@ public class MessagePasserX
                 //Check if client has connected previously
 
 
-                Thread thread = new Thread(new ReceiveHandler(client,MP));
+                Thread thread = new Thread(new ReceiveHandler(client,MP,dbm));
                 thread.start();
             }
 
@@ -517,7 +525,8 @@ public class MessagePasserX
                             (String)map.get("src"), (String)map.get("dest"),
                             (String)map.get("kind"),
                             (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                            null);
+//                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
                     currentRuleSet.add(rule);
                 }
             }
@@ -530,7 +539,8 @@ public class MessagePasserX
                             (String)map.get("src"), (String)map.get("dest"),
                             (String)map.get("kind"),
                             (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                            null);
+//                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
                     currentRuleSet.add(rule);
                 }
             }
@@ -584,7 +594,8 @@ public class MessagePasserX
                                 (String)map.get("src"), (String)map.get("dest"),
                                 (String)map.get("kind"),
                                 (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                                (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                                null);
+//                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
                         currentRuleSet.add(rule);
                     }
                 }
@@ -597,7 +608,8 @@ public class MessagePasserX
                                 (String)map.get("src"), (String)map.get("dest"),
                                 (String)map.get("kind"),
                                 (Integer)(map.get("seqNum")==null?-1:map.get("seqNum")),
-                                (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
+                                null);
+//                            (map.get("duplicate") == null)?null:( (Boolean) map.get("duplicate")?"true":"false" ));
                         currentRuleSet.add(rule);
                     }
                 }
@@ -728,7 +740,7 @@ public class MessagePasserX
                         e.printStackTrace();
                     }
                     //create listener thread
-                    Thread thread = new Thread(new ReceiveHandler(socketClient,this));
+                    Thread thread = new Thread(new ReceiveHandler(socketClient,this, dbm));
                     thread.start();
                 }
 

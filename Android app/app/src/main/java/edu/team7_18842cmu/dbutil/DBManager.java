@@ -32,7 +32,7 @@ public class DBManager {
      * add persons
      */
     public void insert(String tableName, Object[] objects) {
-        db.beginTransaction();  //开始事务
+        db.beginTransaction();
         try {
             //should have 2 elements in the objects array
             if(tableName.equals("peerInfo"))
@@ -45,9 +45,9 @@ public class DBManager {
                 db.execSQL("INSERT INTO priceHistory VALUES(null, ?, ?, ?, ?, ?)", objects);
             else
                 System.out.println("No Such Table");
-            db.setTransactionSuccessful();  //设置事务成功完成
+            db.setTransactionSuccessful();
         } finally {
-            db.endTransaction();    //结束事务
+            db.endTransaction();
         }
     }
 

@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.team7_18842cmu.activities" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -48,6 +51,9 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+
+
     </application>
 
 </manifest>

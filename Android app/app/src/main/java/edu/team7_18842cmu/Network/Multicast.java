@@ -84,7 +84,7 @@ public class Multicast {
                 {
                     //System.out.println("Starting...");
                     //C:\\Users\\Srinath\\Dropbox\\CMU\\4) DS\\Homeworks\\Lab 0\\config.txt
-                    msgPasser = new MessagePasserX(configFile,processName,clockOption);
+                    //msgPasser = new MessagePasserX(configFile,processName,clockOption);
 
                     //Start multicast loop
                     thread = new Thread(new MulticastReceiveLoop());
@@ -95,10 +95,10 @@ public class Multicast {
 
                     continue;
                 }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
+//                catch (IOException e)
+//                {
+//                    e.printStackTrace();
+//                }
                 catch (Exception e)
                 {
                     e.printStackTrace();
