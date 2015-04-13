@@ -29,9 +29,12 @@ import java.util.Queue;
 
 import org.yaml.snakeyaml.Yaml;
 
+import edu.team7_18842cmu.dbutil.DBManager;
+
 
 public class MessagePasserX
 {
+    public DBManager dbm;
     //List of all current rules
     ArrayList<Rule> currentRuleSet = new ArrayList<Rule>();
 
@@ -78,10 +81,11 @@ public class MessagePasserX
 
     int randomVarToDealWithGit;
     //TODO: where to deal with proc_name
-    public MessagePasserX(String config_filename, String proc_name, String clockType) throws Exception
+    public MessagePasserX(String config_filename, String proc_name, String clockType, DBManager dbm) throws Exception
     {
         this.clockOption = clockType;
         this.serverName = proc_name;
+        this.dbm = dbm;
 
         // CL Read config file and parse and save the config state
         //YAML stuff here...populate currentRuleSet
@@ -280,7 +284,7 @@ public class MessagePasserX
         //Receive side:
         //Setup listener thread that populates receive queue
 
-        receiverThread = new Thread(new ReceiveLoop(serverSocket,serverPort,this));
+        receiverThread = new Thread(new ReceiveLoop(serverSocket,serverPort,this, dbm));
         receiverThread.start();
 
         //return;
@@ -297,14 +301,16 @@ public class MessagePasserX
         ServerSocket serverSocket;
         int serverPort;
         MessagePasserX MP;
+        DBManager dbm;
 
 
 
-        public ReceiveLoop(ServerSocket serverSocket, int serverPort,MessagePasserX MP) {
+        public ReceiveLoop(ServerSocket serverSocket, int serverPort,MessagePasserX MP, DBManager dbm) {
             super();
             this.serverSocket = serverSocket;
             this.serverPort = serverPort;
             this.MP = MP;
+            this.dbm = dbm;
         }
 
 
@@ -342,7 +348,7 @@ public class MessagePasserX
                 //Check if client has connected previously
 
 
-                Thread thread = new Thread(new ReceiveHandler(client,MP));
+                Thread thread = new Thread(new ReceiveHandler(client,MP,dbm));
                 thread.start();
             }
 
@@ -734,7 +740,7 @@ public class MessagePasserX
                         e.printStackTrace();
                     }
                     //create listener thread
-                    Thread thread = new Thread(new ReceiveHandler(socketClient,this));
+                    Thread thread = new Thread(new ReceiveHandler(socketClient,this, dbm));
                     thread.start();
                 }
 

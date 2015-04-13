@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 import edu.team7_18842cmu.Network.Message;
 import edu.team7_18842cmu.Network.MessagePasserX;
+import edu.team7_18842cmu.dbutil.DBManager;
 
 //public class MessagePasserService extends IntentService {
 public class MessagePasserService extends Service {
@@ -17,18 +18,19 @@ public class MessagePasserService extends Service {
     private static String clockOption;
     private static String nodeName;
     static MessagePasserX msgPasser;
-
+    public  DBManager dbm;
 
     @Override
     public void onCreate() {
         // The service is being created
-System.out.println("DODODODODO");
+        dbm = new DBManager(this);
+        System.out.println("DODODODODO");
                 //TODO: Init message passer here
-        configFile = "http://pastebin.com/raw.php?i=whdf6rBa";
+        configFile = "http://pastebin.com/raw.php?i=RbUzgEDX";
         clockOption = "vector";
         nodeName = "nodeName";
         try {
-            msgPasser = new MessagePasserX(configFile,nodeName,clockOption);
+            msgPasser = new MessagePasserX(configFile,nodeName,clockOption, dbm);
             System.out.println("Made a new message passer");
         } catch (Exception e) {
             e.printStackTrace();

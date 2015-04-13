@@ -4,13 +4,19 @@ package edu.team7_18842cmu.Network;
  * Created by Prabhanjan Batni on 05/04/2015.
  */
 
+import android.content.Context;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.Queue;
+
+import edu.team7_18842cmu.StoredItem;
+import edu.team7_18842cmu.dbutil.DBManager;
 
 public class ReceiveHandler implements Runnable{
 
@@ -18,11 +24,13 @@ public class ReceiveHandler implements Runnable{
     MessagePasserX MP;
     ObjectInputStream IS;
     HostWithSocketAndStream hostTemp;
+    DBManager dbm;
 
-    public ReceiveHandler(Socket client, MessagePasserX MP)
+    public ReceiveHandler(Socket client, MessagePasserX MP, DBManager dbm)
     {
         this .client = client;
         this.MP = MP;
+        this.dbm = dbm;
     }
 
     public void run()
@@ -83,6 +91,17 @@ public class ReceiveHandler implements Runnable{
                 System.out.println("|  timestamp:          " + msg.timestamp.toString());
                 System.out.println("************************************");
                 MP.receiveQueue.add(msg);
+                if(msg.getMessageType().equals("Request")) {
+                    List<StoredItem> results;
+                    results = dbm.locateItem((String) msg.getPayload());
+                    StringBuffer response = new StringBuffer();
+                    for (int i = 0; i < results.size(); i++) {
+                        response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
+                    }
+                    Message newMsg = new Message("N2", "Response", response.toString());
+                    MP.send(newMsg);
+                }
+
             }
             //doReceiveStuff();
         }
