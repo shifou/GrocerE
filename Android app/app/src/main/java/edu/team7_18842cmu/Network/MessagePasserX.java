@@ -912,28 +912,9 @@ public class MessagePasserX
 
                     e1.printStackTrace();
                 }
-                try
-                {
 
-                    host.OS.writeObject(message);
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-
-                if(message.isToBeLogged == true)
-                {
-						/*try
-						{
-							Logger.OS.writeObject(message);
-						}
-						catch (IOException e)
-						{
-							e.printStackTrace();
-						}*/
-                }
-
+                    //write the string out to server
+                    host.getPw().write((String)message.getPayload());
 
                 System.out.println("---------------------------------------Message sent to "+ host.getHostName()+" @ "+host.getIpAddr()+":"+host.getPort());
                 return;
