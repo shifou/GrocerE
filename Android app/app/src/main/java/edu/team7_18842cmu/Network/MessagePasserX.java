@@ -205,19 +205,11 @@ public class MessagePasserX
         System.out.println("The message's timestamp is: " + message.timestamp.toString());
 
         //Boolean sent = checkSendRule(message);
-        sendMessage(message);
 
-       /* if(sent)
-        {
-            //check delayed message
-            for(Message delayedMessage: this.delayedSendQueue)
-            {
-                //send every message in the delayed queue
-                sendMessage(delayedMessage);
-            }
-            //empty the send queue
-            this.delayedSendQueue.clear();
-        }*/
+        if(message.getMessageType().equals("server"))
+            sendMessageToServer(message);
+        else
+            sendMessage(message);
 
         return true;
     }
