@@ -864,7 +864,7 @@ public class MessagePasserX
                         socketClient = new Socket(host.ipAddr,host.port);
                         System.out.println("Connection Established with "+host.hostName+ " @ "+host.ipAddr+":"+host.port);
                         host.setSocket(socketClient);
-                        //Create new output stream
+                        //Create new input stream
                         InputStream is=socketClient.getInputStream();
                         BufferedReader br=new BufferedReader(new InputStreamReader(is));
                         //get output stream
@@ -907,6 +907,7 @@ public class MessagePasserX
 
                     //write the string out to server
                     host.getPw().write((String)message.getPayload());
+                    host.getPw().flush();
 
                 System.out.println("---------------------------------------Message sent to "+ host.getHostName()+" @ "+host.getIpAddr()+":"+host.getPort());
                 return;
