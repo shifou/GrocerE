@@ -3,13 +3,17 @@ package edu.team7_18842cmu.Network;
 /**
  * Created by Prabhanjan on 05/04/2015.
  */
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -811,6 +815,103 @@ public class MessagePasserX
 					System.out.println("The message's timestamp is: " + message.timestamp.toString());*/
 
                 //Write object to stream
+                try
+                {
+
+                    host.OS.writeObject(message);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+                if(message.isToBeLogged == true)
+                {
+						/*try
+						{
+							Logger.OS.writeObject(message);
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}*/
+                }
+
+
+                System.out.println("---------------------------------------Message sent to "+ host.getHostName()+" @ "+host.getIpAddr()+":"+host.getPort());
+                return;
+            }
+
+
+        }
+
+
+
+
+    }
+
+    void sendMessageToServer(Message message)
+    {
+
+        for(HostWithSocketAndStream host: listOfEverything)
+        {
+            //System.out.println("destinationHostName is : " + host.hostName + "--------------------------------------");
+            //System.out.println(" message's destination is : " + message.destinationNodeName + "--------------------------------------");
+            if(host.getHostName().equals(message.destinationNodeName))
+            {
+                //At this point, we need to check if socket exists
+                //System.out.println("About to check if socket exists ie host.name == mess.dest" + "--------------------------------------");
+                if (host.getSocket() == null)
+                {
+                    //Here, socket does not exist, so we are creating it
+                    System.out.println("Socket does not exist so we are creating it");
+                    System.out.println("Attempting to connect to "+host.hostName+ " @ "+ host.ipAddr+":"+host.port);
+                    Socket socketClient = null;
+                    try
+                    {
+                        socketClient = new Socket(host.ipAddr,host.port);
+                        System.out.println("Connection Established with "+host.hostName+ " @ "+host.ipAddr+":"+host.port);
+                        host.setSocket(socketClient);
+                        //Create new output stream
+                        InputStream is=socketClient.getInputStream();
+                        BufferedReader br=new BufferedReader(new InputStreamReader(is));
+                        //get output stream
+                        OutputStream os=socketClient.getOutputStream();
+                        PrintWriter pw=new PrintWriter(os);
+
+                        host.setBr(br);
+                        host.setPw(pw);
+
+                    }
+                    catch (ConnectException e) //Done: handle timeouts
+                    {
+                        System.out.println("Connection Timeout for "+host.hostName+ "@"+host.ipAddr+":"+host.port);
+                        e.printStackTrace();
+                        continue;
+
+                    }
+                    catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //create listener thread
+                    Thread thread = new Thread(new ServerReceiveHandler(socketClient,this, dbm));
+                    thread.start();
+                }
+
+                System.out.println("Sending message to "+ host.getHostName()+" @ "+host.getIpAddr()+":"+host.getPort()+ ", seqNum: "+ message.SeqNum);
+
+                try
+                {
+                    Thread.sleep(3000);
+                }
+                catch (InterruptedException e1)
+                {
+
+                    e1.printStackTrace();
+                }
                 try
                 {
 
