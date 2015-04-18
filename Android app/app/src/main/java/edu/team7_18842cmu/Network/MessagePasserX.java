@@ -183,8 +183,9 @@ public class MessagePasserX
         System.out.println("Made it to send");
         message.setSeqNum(seqNumGlobal);
         seqNumGlobal++;
+        message.setSourceNodeName(serverIP);
         //Set the source name
-        message.setSourceNodeName(this.getNameByIpAddrAndPort(serverIP, serverPort));
+//        message.setSourceNodeName(this.getNameByIpAddrAndPort(serverIP, serverPort));
 
         //TODO: use ClockService to assign timestamp to message
         //Do clock activities

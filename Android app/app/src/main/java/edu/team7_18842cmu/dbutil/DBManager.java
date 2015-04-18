@@ -15,6 +15,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 import edu.team7_18842cmu.StoredItem;
+import edu.team7_18842cmu.model.ItemInfo;
 
 
 public class DBManager {
@@ -52,13 +53,15 @@ public class DBManager {
     }
 
     public void insertList(List<StoredItem> response){
-        StoredItem[] items = new StoredItem[response.size()];
-        db.beginTransaction();
+        System.out.println("# Prices returned: " + response.size());
         for(int i = 0; i < response.size(); i++) {
             StoredItem item = response.get(i);
-            items[i] = item;
+            ItemInfo itemInfo = new ItemInfo(item.getItemName().toString(), item.getItemPrice().toString(),
+                    item.getItemStore().toString(), item.getPurchaseDate().toString(), item.getItemSize().toString());
+            insert("priceInfo", itemInfo.getAttributes());
+            System.out.println("Inserted: " + item.getItemName().toString());
+
         }
-        db.execSQL("INSERT INTO priceInfo VALUES(null, ?, ?, ?, ?, ?)", items);
     }
 
 

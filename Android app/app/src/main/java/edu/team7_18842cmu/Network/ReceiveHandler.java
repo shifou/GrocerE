@@ -90,7 +90,7 @@ public class ReceiveHandler implements Runnable{
                 System.out.println("|  type:               " + msg.MessageType);
                 //System.out.println("|  Maekawa field:      " + msg.maekawaField);
                 System.out.println("|  Target Group:       " + msg.targetGroupName);
-                System.out.println("|  content:            " + (String)msg.getPayload());
+//                System.out.println("|  content:            " + (String)msg.getPayload());
                 System.out.println("|  timestamp:          " + msg.timestamp.toString());
                 System.out.println("************************************");
                 MP.receiveQueue.add(msg);
@@ -101,11 +101,12 @@ public class ReceiveHandler implements Runnable{
 //                    for (int i = 0; i < results.size(); i++) {
 //                        response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
 //                    }
-                    Message newMsg = new Message("128.237.174.150", "Response", results);
+                    Message newMsg = new Message("192.168.2.3", "Response", results);
                     MP.send(newMsg);
                 }
 
                 if(msg.getMessageType().equals("Response")) {
+                    System.out.println("$$$ Handling a response message $$$");
                     dbm.insertList((List<StoredItem>)msg.getPayload());
 
 
