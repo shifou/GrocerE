@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.util.Collections;
 import java.util.List;
 
 import edu.team7_18842cmu.Network.Message;
@@ -27,8 +31,6 @@ import edu.team7_18842cmu.model.AnswerAdapter;
 public class RequestPrice extends ActionBarActivity {
     private DBManager dbm;
     MessagePasserService msgPasserService = null;
-    public List<StoredItem> results = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,15 +45,13 @@ public class RequestPrice extends ActionBarActivity {
         button1.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
-                        try {
-                            requestPrice(v);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        requestPrice(v);
                     }
                 }
         );
     }
+
+
 
 
     @Override
@@ -69,7 +69,7 @@ public class RequestPrice extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void requestPrice(View view) throws InterruptedException {
+    public void requestPrice(View view) {
         final EditText item = (EditText) findViewById(R.id.editText5);
 
         if(item.getText().toString().trim().length() == 0){
@@ -86,56 +86,42 @@ public class RequestPrice extends ActionBarActivity {
                     .show();
         } else {
 
-//            List<StoredItem> results;
-//            results = dbm.locateItem(item.getText().toString());
-//
-//
-//            ListAdapter adapter = new AnswerAdapter(this,results);
-//            ListView listView = (ListView) findViewById(R.id.answerList);
-//            listView.setAdapter(adapter);
 
 
+
+            getResponses task = new getResponses();
+            task.execute(item.getText().toString());
+            item.setText("Fetching prices for \"" + item.getText() + "\"");
+
+        }
+    }
+
+    private class getResponses extends AsyncTask<String, Void, List<StoredItem>> {
+        @Override
+        protected List<StoredItem> doInBackground(String... item) {
             Intent newIntent = new Intent(RequestPrice.this, MessagePasserService.class);
-//            newIntent.putExtra("functionName","send");
-//            Message newMessage = new Message ("N2", "Request", item.getText().toString());
+            List<StoredItem> results = null;
             Bundle extras = new Bundle();
-            extras.putString("itemRequest", item.getText().toString());
+            extras.putString("itemRequest", item[0]);
             extras.putString("functionName", "send");
             newIntent.putExtras(extras);
             startService(newIntent);
+            SystemClock.sleep(10000);
+            results = dbm.locateItem(item[0]);
+            Collections.sort(results);
 
-
-            Thread t = new Thread(new Refresh(item,this));
-            t.start();
-
-
-
-
-            item.setText("");
-
-        }
-    }
-
-    private class Refresh implements Runnable {
-        private EditText item;
-        private RequestPrice rp;
-        public Refresh(EditText item, RequestPrice rp)
-        {
-            this.item = item;
-            this.rp = rp;
+            return results;
         }
 
-        @Override
-        public void run()
-        {
-            results = dbm.locateItem(item.getText().toString());
-
-
-            ListAdapter adapter = new AnswerAdapter(rp,results);
+        protected void onPostExecute(List<StoredItem> results) {
+            ListAdapter adapter = new AnswerAdapter(RequestPrice.this,results);
             ListView listView = (ListView) findViewById(R.id.answerList);
+            EditText item = (EditText) findViewById(R.id.editText5);
+            item.setText("");
             listView.setAdapter(adapter);
-
         }
     }
+
+
 }
 
