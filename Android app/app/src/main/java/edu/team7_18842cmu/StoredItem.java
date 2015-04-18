@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Created by Nick on 4/4/2015.
  */
-public class StoredItem {
+public class StoredItem implements Comparable {
     public String itemName, itemStore, itemSize;
     public BigDecimal itemPrice;
     public Date purchaseDate;
@@ -57,6 +57,12 @@ public class StoredItem {
 
     public Date getPurchaseDate() {
         return purchaseDate;
+    }
+
+    @Override
+    public int compareTo(Object another) {
+        StoredItem orig = (StoredItem)another;
+        return (itemPrice.compareTo(orig.itemPrice));
     }
 }
 

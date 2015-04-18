@@ -34,6 +34,8 @@ public class MainMenu extends ActionBarActivity {
 //        Intent i = new Intent(MainMenu.this, MessagePasserService.class);
 //        startService(i);
 
+
+
         Intent msgPasserIntent = new Intent(this, MessagePasserService.class);
         startService(msgPasserIntent);
 
