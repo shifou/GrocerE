@@ -154,6 +154,35 @@ public class DBManager {
 
     }
 
+    public List<StoredItem> checkForDupes(List<StoredItem> input){
+        List<StoredItem> output = new ArrayList<StoredItem>();
+        Boolean duplicate = false;
+
+        for(int i=0; i < input.size(); i++) {
+            StoredItem candidate = input.get(i);
+            String itemName = candidate.getItemName();
+            List<StoredItem> matches = locateItem(itemName);
+
+            for(int j=0; j < matches.size(); j++) {
+                StoredItem existing = matches.get(j);
+                if(candidate.isEqual(existing)){
+                    System.out.println("Found a duplicate item!!!");
+                    duplicate = true;
+                    break;
+                }
+
+            }
+
+            if(duplicate){
+                duplicate = false;
+                continue;
+            } else {
+                output.add(candidate);
+            }
+        }
+        return output;
+    }
+
     /**
      * close database
      */

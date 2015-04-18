@@ -107,7 +107,9 @@ public class ReceiveHandler implements Runnable{
 
                 if(msg.getMessageType().equals("Response")) {
                     System.out.println("$$$ Handling a response message $$$");
-                    dbm.insertList((List<StoredItem>)msg.getPayload());
+                    List<StoredItem> adds = (List<StoredItem>)msg.getPayload();
+                    adds = dbm.checkForDupes(adds);
+                    dbm.insertList(adds);
 
 
 

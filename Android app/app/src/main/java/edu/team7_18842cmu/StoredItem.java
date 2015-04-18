@@ -65,6 +65,17 @@ public class StoredItem implements Serializable,Comparable{
         StoredItem orig = (StoredItem)another;
         return (itemPrice.compareTo(orig.itemPrice));
     }
+
+    public Boolean isEqual(StoredItem item){
+        if(itemName.equals(item.getItemName()))
+            if(itemSize.equals(item.getItemSize()))
+                if(itemStore.equals(item.getItemStore()))
+                    if(purchaseDate.equals(item.getPurchaseDate()))
+                        if(itemPrice.equals(item.getItemPrice()))
+                            return true;
+
+        return false;
+    }
 }
 
 

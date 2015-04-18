@@ -120,6 +120,7 @@ public class RequestPrice extends ActionBarActivity {
             results = dbm.locateItem(item[0]);
             Collections.sort(results);
 
+
             return results;
         }
 
