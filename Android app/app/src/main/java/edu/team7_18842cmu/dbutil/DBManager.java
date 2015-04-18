@@ -15,6 +15,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 import edu.team7_18842cmu.StoredItem;
+import edu.team7_18842cmu.model.ItemInfo;
 
 
 public class DBManager {
@@ -37,10 +38,10 @@ public class DBManager {
             //should have 2 elements in the objects array
             if(tableName.equals("peerInfo"))
                 db.execSQL("INSERT INTO peerInfo VALUES(?, ?)", objects);
-            //should have 5 elements in the objects array
+                //should have 5 elements in the objects array
             else if(tableName.equals("priceInfo"))
                 db.execSQL("INSERT INTO priceInfo VALUES(null, ?, ?, ?, ?, ?)", objects);
-            //should have 5 elements in the objects array
+                //should have 5 elements in the objects array
             else if(tableName.equals("priceHistory"))
                 db.execSQL("INSERT INTO priceHistory VALUES(null, ?, ?, ?, ?, ?)", objects);
             else
@@ -52,13 +53,14 @@ public class DBManager {
     }
 
     public void insertList(List<StoredItem> response){
-        StoredItem[] items = new StoredItem[response.size()];
-        db.beginTransaction();
+
         for(int i = 0; i < response.size(); i++) {
             StoredItem item = response.get(i);
-            items[i] = item;
+            ItemInfo itemInfo = new ItemInfo(item.getItemName().toString(), item.getItemPrice().toString(),
+                    item.getItemStore().toString(), item.getPurchaseDate().toString(), item.getItemSize().toString());
+            insert("priceInfo", itemInfo.getAttributes());
+
         }
-        db.execSQL("INSERT INTO priceInfo VALUES(null, ?, ?, ?, ?, ?)", items);
     }
 
 
@@ -158,5 +160,4 @@ public class DBManager {
         db.close();
     }
 }
-
 
