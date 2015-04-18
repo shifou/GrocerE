@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.test.RenamingDelegatingContext;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,8 @@ import edu.team7_18842cmu.model.AnswerAdapter;
 public class RequestPrice extends ActionBarActivity {
     private DBManager dbm;
     MessagePasserService msgPasserService = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +96,14 @@ public class RequestPrice extends ActionBarActivity {
             task.execute(item.getText().toString());
             item.setText("Fetching prices for \"" + item.getText() + "\"");
 
+            Button button = (Button)RequestPrice.this.findViewById(R.id.requestbutton);
+            button.setEnabled(false);
+            button.setBackgroundColor( -65536);
+            button.setText("Waiting");
+
+
+
+
         }
     }
 
@@ -105,7 +116,7 @@ public class RequestPrice extends ActionBarActivity {
             extras.putString("itemRequest", item[0]);
             extras.putString("functionName", "send");
             newIntent.putExtras(extras);
-            startService(newIntent);
+//            startService(newIntent);
             SystemClock.sleep(10000);
             results = dbm.locateItem(item[0]);
             Collections.sort(results);
@@ -118,6 +129,10 @@ public class RequestPrice extends ActionBarActivity {
             ListView listView = (ListView) findViewById(R.id.answerList);
             EditText item = (EditText) findViewById(R.id.editText5);
             item.setText("");
+            Button button = (Button)RequestPrice.this.findViewById(R.id.requestbutton);
+            button.setEnabled(true);
+            button.setBackgroundColor(-16711936);
+            button.setText("Request");
             listView.setAdapter(adapter);
         }
     }
