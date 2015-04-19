@@ -1,5 +1,8 @@
 package edu.team7_18842cmu.Network;
 
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -85,14 +88,18 @@ public class ServerReceiveHandler implements Runnable{
                 System.out.println(msg);
                 System.out.println("************************************");
 
-                String[] peerList = msg.split(":");
-                for(int i = 0 ; i < peerList.length; i++){
-                    Object[] objects = new Object[2];
-                    String[] info = peerList[i].split(",");
-                    objects[0] = info[0];
-                    objects[1] = info[1];
-                    dbm.insert("peerInfo",objects);
-                }
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) jsonParser.parse(msg);
+
+                String peerName = (String) jsonObject.get("peerName");
+                String peerAddr = (String) jsonObject.get("Addr");
+//                for(int i = 0 ; i < peerList.length; i++){
+//                    Object[] objects = new Object[2];
+//                    String[] info = peerList[i].split(",");
+//                    objects[0] = info[0];
+//                    objects[1] = info[1];
+//                    dbm.insert("peerInfo",objects);
+//                }
             }
             //doReceiveStuff();
         }
