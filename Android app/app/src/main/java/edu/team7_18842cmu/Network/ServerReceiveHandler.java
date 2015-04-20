@@ -1,6 +1,6 @@
 package edu.team7_18842cmu.Network;
 
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedReader;
@@ -79,6 +79,7 @@ public class ServerReceiveHandler implements Runnable{
                 String line = "";
                 while((line = hostTemp.br.readLine()) != null){
                     msg += line;
+                    break;
                 }
 
 
