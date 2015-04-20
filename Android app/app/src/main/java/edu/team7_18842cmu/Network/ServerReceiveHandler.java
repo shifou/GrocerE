@@ -1,5 +1,8 @@
 package edu.team7_18842cmu.Network;
 
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,7 +48,7 @@ public class ServerReceiveHandler implements Runnable{
                     //Here we have matched the host in listOfeverything to this client socket that has connected
                     System.out.println("Found the host in listOfEverything ");
                     host.setSocket(client);
-                    hostTemp = host;
+
                     //System.out.println("Creating an input stream for "+host.hostName+"@"+host.ipAddr+":"+host.port);
                     if (host.br == null)
                     {
@@ -61,6 +64,7 @@ public class ServerReceiveHandler implements Runnable{
                         host.setPw(pw);
                         System.out.println("Output stream created for "+host.hostName+"@"+host.ipAddr+":"+host.port);
                     }
+                    hostTemp = host;
                     //Create new output stream
                     //host.setOS(new ObjectOutputStream(client.getOutputStream()));
                     break;
@@ -73,7 +77,7 @@ public class ServerReceiveHandler implements Runnable{
                 //System.out.println("Just before receiving message ie about to call readObject() ");
                 String msg = "";
                 String line = "";
-                while((line = br.readLine()) != null){
+                while((line = hostTemp.br.readLine()) != null){
                     msg += line;
                 }
                 //TODO: set receive timestamp for the message
@@ -84,14 +88,18 @@ public class ServerReceiveHandler implements Runnable{
                 System.out.println(msg);
                 System.out.println("************************************");
 
-                String[] peerList = msg.split(":");
-                for(int i = 0 ; i < peerList.length; i++){
-                    Object[] objects = new Object[2];
-                    String[] info = peerList[i].split(",");
-                    objects[0] = info[0];
-                    objects[1] = info[1];
-                    dbm.insert("peerInfo",objects);
-                }
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) jsonParser.parse(msg);
+
+                String peerName = (String) jsonObject.get("peerName");
+                String peerAddr = (String) jsonObject.get("Addr");
+//                for(int i = 0 ; i < peerList.length; i++){
+//                    Object[] objects = new Object[2];
+//                    String[] info = peerList[i].split(",");
+//                    objects[0] = info[0];
+//                    objects[1] = info[1];
+//                    dbm.insert("peerInfo",objects);
+//                }
             }
             //doReceiveStuff();
         }

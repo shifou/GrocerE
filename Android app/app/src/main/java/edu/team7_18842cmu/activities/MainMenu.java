@@ -35,7 +35,11 @@ public class MainMenu extends ActionBarActivity {
 //        startService(i);
 
         Intent msgPasserIntent = new Intent(this, MessagePasserService.class);
-        startService(msgPasserIntent);
+        //startService(msgPasserIntent);
+        Thread t = new Thread(new MsgPasserStarter(msgPasserIntent));
+        t.start();
+
+
 
         //TODO: Initialize the service
         //Intent i = new Intent(this, MessagePasserService.class);
@@ -119,4 +123,19 @@ public class MainMenu extends ActionBarActivity {
         finish();
 
     }
+
+    public class MsgPasserStarter implements Runnable
+    {
+        Intent intent;
+
+        public MsgPasserStarter(Intent i)
+        {
+            intent = i;
+        }
+        @Override
+        public void run() {
+            startService(intent);
+        }
+    }
+
 }
