@@ -7,6 +7,7 @@ import android.os.IBinder;
 
 import java.io.Serializable;
 
+import edu.team7_18842cmu.Network.HostWithSocketAndStream;
 import edu.team7_18842cmu.Network.Message;
 import edu.team7_18842cmu.Network.MessagePasserX;
 import edu.team7_18842cmu.dbutil.DBManager;
@@ -44,10 +45,10 @@ public class MessagePasserService extends Service {
        String item = intent.getStringExtra("itemRequest");
 
         if(function != null) {
-            if (function.equals(new String("send")))
+            /*if (function.equals(new String("send")))
             {
                 //Get send params from intent
-                Message msg = new Message ("128.237.174.150", "Request", item);
+                Message msg = new Message ("192.168.2.3", "Request", item);
 //                Message msg = (Message) intent.getSerializableExtra("messageObject");
                 System.out.println("Destination Node Name" + msg.getDestinationNodeName());
                 System.out.println("Query: " + item);
@@ -57,7 +58,30 @@ public class MessagePasserService extends Service {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }*/
+            if (function.equals(new String("send")))
+            {
+
+                //Get all the current connections from messagePasserX's masterList and send the request out
+                for (HostWithSocketAndStream host : msgPasser.listOfEverything) {
+                    String dest = host.getHostName();
+                    Message msg = new Message(dest, "Request", item);
+                    msg.setSourceNodeName(msgPasser.serverName);
+
+                    if (!dest.equals("bootstrap")) {
+
+                        System.out.println("Destination Node Name" + msg.getDestinationNodeName());
+                        System.out.println("Query: " + item);
+                        System.out.println("Msg Payload: " + msg.getPayload());
+                        try {
+                            msgPasser.send(msg);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
+
             else if (function.equals(new String("receive")))
             {
                 Message recvMsg = msgPasser.receive();

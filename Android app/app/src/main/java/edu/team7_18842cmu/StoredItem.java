@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * Created by Nick on 4/4/2015.
  */
-public class StoredItem implements Serializable{
+public class StoredItem implements Serializable,Comparable{
     public String itemName, itemStore, itemSize;
     public BigDecimal itemPrice;
     public Date purchaseDate;
@@ -58,6 +58,23 @@ public class StoredItem implements Serializable{
 
     public Date getPurchaseDate() {
         return purchaseDate;
+    }
+
+    @Override
+    public int compareTo(Object another) {
+        StoredItem orig = (StoredItem)another;
+        return (itemPrice.compareTo(orig.itemPrice));
+    }
+
+    public Boolean isEqual(StoredItem item){
+        if(itemName.equals(item.getItemName()))
+            if(itemSize.equals(item.getItemSize()))
+                if(itemStore.equals(item.getItemStore()))
+                    if(purchaseDate.equals(item.getPurchaseDate()))
+                        if(itemPrice.equals(item.getItemPrice()))
+                            return true;
+
+        return false;
     }
 }
 

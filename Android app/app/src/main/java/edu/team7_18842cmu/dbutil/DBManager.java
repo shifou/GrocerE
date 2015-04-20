@@ -15,6 +15,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 import edu.team7_18842cmu.StoredItem;
+import edu.team7_18842cmu.model.ItemInfo;
 
 
 public class DBManager {
@@ -52,13 +53,15 @@ public class DBManager {
     }
 
     public void insertList(List<StoredItem> response){
-        StoredItem[] items = new StoredItem[response.size()];
-        db.beginTransaction();
+        System.out.println("# Prices returned: " + response.size());
         for(int i = 0; i < response.size(); i++) {
             StoredItem item = response.get(i);
-            items[i] = item;
+            ItemInfo itemInfo = new ItemInfo(item.getItemName().toString(), item.getItemPrice().toString(),
+                    item.getItemStore().toString(), item.getPurchaseDate().toString(), item.getItemSize().toString());
+            insert("priceInfo", itemInfo.getAttributes());
+            System.out.println("Inserted: " + item.getItemName().toString());
+
         }
-        db.execSQL("INSERT INTO priceInfo VALUES(null, ?, ?, ?, ?, ?)", items);
     }
 
 
@@ -149,6 +152,35 @@ public class DBManager {
 
         return item;
 
+    }
+
+    public List<StoredItem> checkForDupes(List<StoredItem> input){
+        List<StoredItem> output = new ArrayList<StoredItem>();
+        Boolean duplicate = false;
+
+        for(int i=0; i < input.size(); i++) {
+            StoredItem candidate = input.get(i);
+            String itemName = candidate.getItemName();
+            List<StoredItem> matches = locateItem(itemName);
+
+            for(int j=0; j < matches.size(); j++) {
+                StoredItem existing = matches.get(j);
+                if(candidate.isEqual(existing)){
+                    System.out.println("Found a duplicate item!!!");
+                    duplicate = true;
+                    break;
+                }
+
+            }
+
+            if(duplicate){
+                duplicate = false;
+                continue;
+            } else {
+                output.add(candidate);
+            }
+        }
+        return output;
     }
 
     /**

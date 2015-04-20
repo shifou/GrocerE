@@ -90,23 +90,38 @@ public class ReceiveHandler implements Runnable{
                 System.out.println("|  type:               " + msg.MessageType);
                 //System.out.println("|  Maekawa field:      " + msg.maekawaField);
                 System.out.println("|  Target Group:       " + msg.targetGroupName);
-                System.out.println("|  content:            " + (String)msg.getPayload());
+//                System.out.println("|  content:            " + (String)msg.getPayload());
                 System.out.println("|  timestamp:          " + msg.timestamp.toString());
                 System.out.println("************************************");
                 MP.receiveQueue.add(msg);
-                if(msg.getMessageType().equals("Request")) {
+                /*if(msg.getMessageType().equals("Request")) {
                     List<StoredItem> results;
                     results = dbm.locateItem((String) msg.getPayload());
 //                    StringBuffer response = new StringBuffer();
 //                    for (int i = 0; i < results.size(); i++) {
 //                        response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
 //                    }
-                    Message newMsg = new Message("128.237.174.150", "Response", results);
+                    Message newMsg = new Message("192.168.2.3", "Response", results);
+                    MP.send(newMsg);
+                }*/
+
+                if(msg.getMessageType().equals("Request")) {
+                    List<StoredItem> results;
+                    results = dbm.locateItem((String) msg.getPayload());
+                    StringBuffer response = new StringBuffer();
+                    for (int i = 0; i < results.size(); i++) {
+                        response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
+                    }
+                    Message newMsg = new Message(msg.sourceNodeName, "Response", response.toString());
                     MP.send(newMsg);
                 }
 
+
                 if(msg.getMessageType().equals("Response")) {
-                    dbm.insertList((List<StoredItem>)msg.getPayload());
+                    System.out.println("$$$ Handling a response message $$$");
+                    List<StoredItem> adds = (List<StoredItem>)msg.getPayload();
+                    adds = dbm.checkForDupes(adds);
+                    dbm.insertList(adds);
 
 
 

@@ -4,8 +4,12 @@ package edu.team7_18842cmu.Network;
  * Created by Prabhanjan Batni on 05/04/2015.
  */
 
+import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -19,7 +23,31 @@ public class HostWithSocketAndStream
     Socket socket;
     ObjectInputStream IS;
     ObjectOutputStream OS;
+    BufferedReader br;
+    PrintWriter pw;
+
     ArrayList<String> groupList;
+
+
+    public BufferedReader getBr() {
+        return br;
+    }
+
+    public void setBr(BufferedReader br) {
+        this.br = br;
+    }
+
+    public PrintWriter getPw() {
+        return pw;
+    }
+
+    public void setPw(PrintWriter pw) {
+        this.pw = pw;
+    }
+
+
+
+
     public String getHostName() {
         return hostName;
     }
