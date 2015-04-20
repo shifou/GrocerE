@@ -61,7 +61,7 @@ public class MessagePasserX
     int seqNumGlobal;
 
     //Port number of this Node
-    protected String serverIP;
+    public String serverIP;
     protected int serverPort;
     public String serverName;
 
