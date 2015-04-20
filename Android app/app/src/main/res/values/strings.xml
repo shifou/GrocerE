@@ -17,11 +17,11 @@
     <string name="title_activity_request_price">Request Price</string>
     <string name="title_activity_change_stores">Store Preferences</string>
 
-    <string name="item_name">Item:</string>
-    <string name="item_quantity">Quantity:</string>
-    <string name="item_purchased">Date Purchased:</string>
-    <string name="item_store">Store:</string>
-    <string name="item_price">Item Price:</string>
+    <string name="item_name">Item:  </string>
+    <string name="item_quantity">Quantity:  </string>
+    <string name="item_purchased">Date Purchased:  </string>
+    <string name="item_store">Store:  </string>
+    <string name="item_price">Item Price:  </string>
 
     <string name="name_message">Enter the item name</string>
     <string name="quantity_message">Enter the amount purchased</string>
