@@ -80,6 +80,8 @@ public class ServerReceiveHandler implements Runnable{
                 while((line = hostTemp.br.readLine()) != null){
                     msg += line;
                 }
+
+
                 //TODO: set receive timestamp for the message
                 //System.out.println("Just after receiving message ");
                 System.out.println("Message Received: ");
@@ -91,8 +93,12 @@ public class ServerReceiveHandler implements Runnable{
                 JSONParser jsonParser = new JSONParser();
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(msg);
 
-                String peerName = (String) jsonObject.get("peerName");
-                String peerAddr = (String) jsonObject.get("Addr");
+                String peerName = (String) jsonObject.get("Peers");
+                String[] Addrs = peerName.split("/+");
+                for(int i=0; i < Addrs.length; i++) {
+                    HostWithSocketAndStream host = new HostWithSocketAndStream(Addrs[i]+":12000",Addrs[i], 12000);
+                    MP.listOfEverything.add(host);
+                }
 //                for(int i = 0 ; i < peerList.length; i++){
 //                    Object[] objects = new Object[2];
 //                    String[] info = peerList[i].split(",");

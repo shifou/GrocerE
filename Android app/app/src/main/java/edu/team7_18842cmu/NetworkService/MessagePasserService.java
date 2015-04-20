@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 
 import edu.team7_18842cmu.Network.HostWithSocketAndStream;
 import edu.team7_18842cmu.Network.Message;
@@ -33,6 +34,13 @@ public class MessagePasserService extends Service {
         try {
             msgPasser = new MessagePasserX(configFile,nodeName,clockOption, dbm);
             System.out.println("Made a new message passer");
+
+            InetAddress address=InetAddress.getByName("");
+            String[] a = address.toString().split("/");
+            String payload = "{\"Type\":0,\"Mid\":\""+ a[1]+ "\",\"Ipaddr\":\""+ a[1]+ "\",\"Port\":9999,\"Peers\":\"0\"}";
+            Message msg = new Message("insert the IP addr of the server","server", payload);
+            msgPasser.send(msg);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
