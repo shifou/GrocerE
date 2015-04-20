@@ -12,6 +12,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type User struct {
@@ -36,7 +37,7 @@ func checkConError(err error) int {
 
 			return 0
 		}
-		log.Fatal("an error!", err.Error())
+		fmt.Println("an error!", err.Error())
 		return -1
 	}
 	return 1
@@ -72,24 +73,24 @@ func New() Server {
 	dbU, dberr = sql.Open("sqlite3", "./user_data.db")
 	defer dbU.Close()
 	if dberr != nil || dbU == nil {
-		fmt.Println(dberr)
+		logger.Println(dberr)
 		return nil
 	}
-	errr := dbU.Begin()
+	errr := dbU.Ping()
 	if errr != nil {
-		log.Fatalf("Error on opening user database connection: %s", err.Error())
+		logger.Fatalf("Error on opening user database connection: %s", err.Error())
 		return nil
 	}
 
 	dbS, dberr = sql.Open("sqlite3", "./store_data.db")
 	defer dbS.Close()
 	if dberr != nil || dbS == nil {
-		fmt.Println(dberr)
+		logger.Println(dberr)
 		return nil
 	}
-	errr = dbS.Begin()
+	errr = dbS.Ping()
 	if errr != nil {
-		log.Fatalf("Error on opening user database connection: %s", err.Error())
+		logger.Fatalf("Error on opening user database connection: %s", err.Error())
 		return nil
 	}
 
@@ -101,7 +102,7 @@ func New() Server {
 }
 
 func handle(mes *serverNode, con net.Conn, id int) {
-	//var wr = bufio.NewWriter(con)
+	var wr = bufio.NewWriter(con)
 	var re = bufio.NewReader(con)
 	var rebuf [2000]byte
 	for {
@@ -109,30 +110,58 @@ func handle(mes *serverNode, con net.Conn, id int) {
 		flag := checkConError(err)
 		if flag == 0 {
 			fmt.Println("client ", id, " exit")
+			logger.Println("client ", id, " exit")
 			break
 		}
 		msg := &Message{}
 		err = json.Unmarshal(rebuf[0:num], msg)
 		if err == nil {
 			fmt.Println("###Client ###: :received" + msg.String())
+
 			switch msg.Type {
 			case MsgLogin:
-				/*
-					stmt, err := dbU.Prepare("INSERT INTO users(Mid, Ipaddr, Port, Stores) values(?,?,?,?)")
-					res, err := stmt.Exec(msg.Mid, msg.Ipaddr, msg.Port, msg.Peers)
-					if err != nil {
-						stmt, err = dbU.Prepare("update users set Ipaddr=?, Port=?, Stores=? where Mid=?")
-						res, err := stmt.Exec(msg.Ipaddr, msg.Port, msg.Peers, msg.Mid)
-						checkDbErr("update users set Ipaddr=?, Port=?, Stores=? where Mid=?", err)
-					}
-				*/
+				stmt, err := dbU.Prepare("INSERT INTO users(Mid, Ipaddr, Port, Stores) values(?,?,?,?)")
+				res, err := stmt.Exec(msg.Mid, msg.Ipaddr, msg.Port, msg.Peers)
+				if err != nil {
+					stmt, err = dbU.Prepare("update users set Ipaddr=?, Port=?, Stores=? where Mid=?")
+					res, err := stmt.Exec(msg.Ipaddr, msg.Port, msg.Peers, msg.Mid)
+					checkDbErr("update users set Ipaddr=?, Port=?, Stores=? where Mid=?", err)
+				}
+				_, err := wr.WriteString("logged")
+				if err != nil {
+					logger.Println(id + " send logged error")
+				}
 			case MsgQuery:
+
 			case MsgExit:
+				var ans string
+				var hold string
+				rows, err := dbU.Query("select Stores from users where Mid=?", msg.Mid).Scan(&ans)
+				checkDbErr("exit user"+msg.String(), err)
+				fmt.Println("now list: " + ans)
+				storelist := ans.split(' ')
+				for i := range storelist {
+					rows, err = dbS.Query("select List from stores where Name=?", strings.Trim(storelist[i])).Scan(&hold)
+					checkDbErr("exit user update: "+storelist[i], err)
+					hold = strings.Replace(s, msg.Mid, "", -1)
+					stmt, err = dbS.Prepare("update stores set List=? where Name=?")
+					res, err := stmt.Exec(hold, strings.Trim(storelist[i]))
+					checkDbErr("exit user update store: "+storelist[i]+" "+hold, err)
+				}
 			default:
 				fmt.Println("unknow query type name")
 			}
+
+			//_, err := wr.WriteString("hello!!!!!!!!\n")
+
+			nbuf := []byte("\n")
+			_, errr := wr.Write(nbuf)
+			if errr != nil {
+				fmt.Println("\\n send error")
+			}
+			wr.Flush()
 		} else {
-			fmt.Print(string(rebuf[:]))
+			fmt.Println("error format: ", string(rebuf[:]))
 		}
 	}
 	//db, err := sql.Open("sqlite3", "./list.db")

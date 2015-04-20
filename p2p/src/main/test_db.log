@@ -1,5 +1,6 @@
-[INFO]2015/04/06 17:43:46 test_db.go:41: ==========start===========
-[INFO]2015/04/06 17:43:46 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(1,'127.0.0.1',80,"Giant Eagle,Best Buy");
-[INFO]2015/04/06 17:43:46 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(22,'127.0.0.44',80,"Giant Eagle,Best Buy");
-[INFO]2015/04/06 17:43:46 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(2555,'127.0.0.55',80,"ABC,DEF");
-[INFO]2015/04/06 17:43:46 test_db.go:29: exec:  select * from users;
+[INFO]2015/04/14 18:48:37 test_db.go:41: ==========start===========
+[INFO]2015/04/14 18:48:37 test_db.go:29: exec:  drop table users;create table users (Mid text primary key, Ipaddr text, Port Integer, Stores text);
+[INFO]2015/04/14 18:48:37 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(1,'127.0.0.1',80,"Giant Eagle,Best Buy");
+[INFO]2015/04/14 18:48:37 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(22,'127.0.0.44',80,"Giant Eagle,Best Buy");
+[INFO]2015/04/14 18:48:37 test_db.go:29: exec:  insert into users(Mid,Ipaddr,Port,Stores) values(2555,'127.0.0.55',80,"ABC,DEF");
+[INFO]2015/04/14 18:48:37 test_db.go:29: exec:  select * from users;
