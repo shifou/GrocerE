@@ -45,7 +45,7 @@ public class MessagePasserX
     //PB List of all Host connections
     ArrayList<Socket> connectedSendHosts = new ArrayList<Socket>();
     ArrayList<Socket> connectedReceiveHosts = new ArrayList<Socket>();
-    ArrayList<HostWithSocketAndStream> listOfEverything = new ArrayList<HostWithSocketAndStream>();
+    public ArrayList<HostWithSocketAndStream> listOfEverything = new ArrayList<HostWithSocketAndStream>();
 
     //Queues for sending and receiving
     Queue<Message> sendQueue,receiveQueue;
@@ -63,7 +63,7 @@ public class MessagePasserX
     //Port number of this Node
     protected String serverIP;
     protected int serverPort;
-    protected String serverName;
+    public String serverName;
 
     //Socket of this Node
     protected ServerSocket serverSocket;

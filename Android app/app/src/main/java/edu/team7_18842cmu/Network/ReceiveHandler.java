@@ -94,7 +94,7 @@ public class ReceiveHandler implements Runnable{
                 System.out.println("|  timestamp:          " + msg.timestamp.toString());
                 System.out.println("************************************");
                 MP.receiveQueue.add(msg);
-                if(msg.getMessageType().equals("Request")) {
+                /*if(msg.getMessageType().equals("Request")) {
                     List<StoredItem> results;
                     results = dbm.locateItem((String) msg.getPayload());
 //                    StringBuffer response = new StringBuffer();
@@ -103,7 +103,19 @@ public class ReceiveHandler implements Runnable{
 //                    }
                     Message newMsg = new Message("192.168.2.3", "Response", results);
                     MP.send(newMsg);
+                }*/
+
+                if(msg.getMessageType().equals("Request")) {
+                    List<StoredItem> results;
+                    results = dbm.locateItem((String) msg.getPayload());
+                    StringBuffer response = new StringBuffer();
+                    for (int i = 0; i < results.size(); i++) {
+                        response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
+                    }
+                    Message newMsg = new Message(msg.sourceNodeName, "Response", response.toString());
+                    MP.send(newMsg);
                 }
+
 
                 if(msg.getMessageType().equals("Response")) {
                     System.out.println("$$$ Handling a response message $$$");
