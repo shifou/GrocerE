@@ -97,7 +97,27 @@ public class ServerReceiveHandler implements Runnable{
                 String[] Addrs = peerName.split("/+");
                 for(int i=0; i < Addrs.length; i++) {
                     HostWithSocketAndStream host = new HostWithSocketAndStream(Addrs[i]+":12000",Addrs[i], 12000);
-                    MP.listOfEverything.add(host);
+
+
+                    //MP.listOfEverything.add(host);
+
+                    //Here we check if the IP address already exists in the listOfEverything
+                    boolean duplicate = false;
+                    for (HostWithSocketAndStream hst: MP.listOfEverything)
+                    {
+
+                        if (hst.hostName.equals(host.hostName))
+                        {
+                            //We have a duplicate
+                            duplicate = true;
+                            break;
+                        }
+                    }
+
+                    if (duplicate == false)
+                    {
+                        MP.listOfEverything.add(host);
+                    }
                 }
 //                for(int i = 0 ; i < peerList.length; i++){
 //                    Object[] objects = new Object[2];

@@ -7,6 +7,7 @@ import android.os.IBinder;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import edu.team7_18842cmu.Network.HostWithSocketAndStream;
 import edu.team7_18842cmu.Network.Message;
@@ -35,10 +36,10 @@ public class MessagePasserService extends Service {
             msgPasser = new MessagePasserX(configFile,nodeName,clockOption, dbm);
             System.out.println("Made a new message passer");
 
-            InetAddress address=InetAddress.getByName("");
+            String address=msgPasser.serverIP;
             String[] a = address.toString().split("/");
-            String payload = "{\"Type\":0,\"Mid\":\""+ a[1]+ "\",\"Ipaddr\":\""+ a[1]+ "\",\"Port\":9999,\"Peers\":\"0\"}";
-            Message msg = new Message("insert the IP addr of the server","server", payload);
+            String payload = "{\"Type\":0,\"Mid\":\""+ a[1]+ "\",\"Ipaddr\":\""+ a[1]+ "\",\"Port\":12000,\"Peers\":\"0\"}";
+            Message msg = new Message("BootstrapNode","server", payload);
             msgPasser.send(msg);
             
         } catch (Exception e) {
@@ -70,19 +71,43 @@ public class MessagePasserService extends Service {
             if (function.equals(new String("send")))
             {
 
+                //Refresh the peerlistjust in case
+                InetAddress address= null;
+                try {
+                    address = InetAddress.getByName("");
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+                String[] a = address.toString().split("/");
+                String payload = "{\"Type\":0,\"Mid\":\""+ a[1]+ "\",\"Ipaddr\":\""+ a[1]+ "\",\"Port\":12000,\"Peers\":\"0\"}";
+                Message msg = new Message("BootstrapNode","server", payload);
+                try {
+                    msgPasser.send(msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //Now we wait to mke sure the peerlist has been updated
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
                 //Get all the current connections from messagePasserX's masterList and send the request out
                 for (HostWithSocketAndStream host : msgPasser.listOfEverything) {
                     String dest = host.getHostName();
-                    Message msg = new Message(dest, "Request", item);
-                    msg.setSourceNodeName(msgPasser.serverName);
+                    Message msg2 = new Message(dest, "Request", item);
+                    msg2.setSourceNodeName(msgPasser.serverName);
 
                     if (!dest.equals("bootstrap")) {
 
-                        System.out.println("Destination Node Name" + msg.getDestinationNodeName());
+                        System.out.println("Destination Node Name" + msg2.getDestinationNodeName());
                         System.out.println("Query: " + item);
-                        System.out.println("Msg Payload: " + msg.getPayload());
+                        System.out.println("Msg Payload: " + msg2.getPayload());
                         try {
-                            msgPasser.send(msg);
+                            msgPasser.send(msg2);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
