@@ -3,11 +3,17 @@ package edu.team7_18842cmu.NetworkService;
 import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
+import android.text.format.Formatter;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Enumeration;
 
 import edu.team7_18842cmu.Network.HostWithSocketAndStream;
 import edu.team7_18842cmu.Network.Message;
@@ -36,9 +42,15 @@ public class MessagePasserService extends Service {
             msgPasser = new MessagePasserX(configFile,nodeName,clockOption, dbm);
             System.out.println("Made a new message passer");
 
-            String address=msgPasser.serverIP;
-            String[] a = address.toString().split("/");
-            String payload = "{\"Type\":0,\"Mid\":\""+ a[1]+ "\",\"Ipaddr\":\""+ a[1]+ "\",\"Port\":12000,\"Peers\":\"0\"}";
+            WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+            int ip = wifiInfo.getIpAddress();
+            String ipAddress = Formatter.formatIpAddress(ip);
+
+//            InetAddress address=InetAddress.getLocalHost();
+//            String[] a = address.toString().split("/");
+//            System.out.println("%%%%%% " + ipAddress);
+            String payload = "{\"Type\":0,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
             Message msg = new Message("BootstrapNode","server", payload);
             msgPasser.send(msg);
             
