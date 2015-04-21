@@ -113,7 +113,7 @@ public class MessagePasserService extends Service {
                     Message msg2 = new Message(dest, "Request", item);
                     msg2.setSourceNodeName(msgPasser.serverName);
 
-                    if (!dest.equals("bootstrap")) {
+                    if (!dest.equals("BootstrapNode")) {
 
                         System.out.println("Destination Node Name" + msg2.getDestinationNodeName());
                         System.out.println("Query: " + item);
