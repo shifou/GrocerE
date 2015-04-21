@@ -111,11 +111,19 @@ public class MessagePasserService extends Service {
                 for (HostWithSocketAndStream host : msgPasser.listOfEverything) {
                     String dest = host.getHostName();
                     Message msg2 = new Message(dest, "Request", item);
-                    msg2.setSourceNodeName(msgPasser.serverName);
+                    //msg2.setSourceNodeName(msgPasser.serverName);
 
+                    WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+                    WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+                    int ip = wifiInfo.getIpAddress();
+                    String ipAddress = Formatter.formatIpAddress(ip);
+
+                    msg2.setSourceNodeName(ipAddress);
+
+                    System.out.println("---------------------Node name is:" + dest + "--------------------------------------------");
                     if (!dest.equals("BootstrapNode")) {
 
-                        System.out.println("Destination Node Name" + msg2.getDestinationNodeName());
+                        System.out.println("Destination Node Name (should not be bootstrap)" + msg2.getDestinationNodeName());
                         System.out.println("Query: " + item);
                         System.out.println("Msg Payload: " + msg2.getPayload());
                         try {

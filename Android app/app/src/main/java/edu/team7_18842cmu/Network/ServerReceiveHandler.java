@@ -95,9 +95,10 @@ public class ServerReceiveHandler implements Runnable{
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(msg);
 
                 String peerName = (String) jsonObject.get("Peers");
-                String[] Addrs = peerName.split("/+");
+                String[] Addrs = peerName.split("\\+");
                 for(int i=0; i < Addrs.length; i++) {
-                    HostWithSocketAndStream host = new HostWithSocketAndStream(Addrs[i]+":12000",Addrs[i], 12000);
+                    System.out.println("Addrs[" + i + "] =" + Addrs[i]);
+                    HostWithSocketAndStream host = new HostWithSocketAndStream(Addrs[i],Addrs[i],12000);
 
 
                     //MP.listOfEverything.add(host);
