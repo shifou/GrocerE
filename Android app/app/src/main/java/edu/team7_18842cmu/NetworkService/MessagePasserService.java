@@ -117,7 +117,7 @@ public class MessagePasserService extends Service {
                     WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
                     int ip = wifiInfo.getIpAddress();
                     String ipAddress = Formatter.formatIpAddress(ip);
-
+                    System.out.println("---------------------SourceNode name is:" + dest + "--------------------------------------------");
                     msg2.setSourceNodeName(ipAddress);
 
                     System.out.println("---------------------Node name is:" + dest + "--------------------------------------------");

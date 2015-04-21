@@ -183,7 +183,7 @@ public class MessagePasserX
         System.out.println("Made it to send");
         message.setSeqNum(seqNumGlobal);
         seqNumGlobal++;
-        message.setSourceNodeName(serverIP);
+        //message.setSourceNodeName(serverIP);
         //Set the source name
 //        message.setSourceNodeName(this.getNameByIpAddrAndPort(serverIP, serverPort));
 
