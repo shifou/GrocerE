@@ -34,7 +34,7 @@ public class MessagePasserService extends Service {
         // The service is being created
         dbm = new DBManager(this);
         System.out.println("DODODODODO");
-                //TODO: Init message passer here
+
         configFile = "http://pastebin.com/raw.php?i=whdf6rBa";
         clockOption = "vector";
         nodeName = "nodeName";
@@ -52,7 +52,9 @@ public class MessagePasserService extends Service {
 //            System.out.println("%%%%%% " + ipAddress);
             String payload = "{\"Type\":0,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
             Message msg = new Message("BootstrapNode","server", payload);
-            msgPasser.send(msg);
+
+            //TODO: uncomment this
+//            msgPasser.send(msg);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,28 +85,30 @@ public class MessagePasserService extends Service {
             if (function.equals(new String("send")))
             {
 
-                //Refresh the peerlistjust in case
-                InetAddress address= null;
-                try {
-                    address = InetAddress.getByName("");
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-                String[] a = address.toString().split("/");
-                String payload = "{\"Type\":0,\"Mid\":\""+ a[1]+ "\",\"Ipaddr\":\""+ a[1]+ "\",\"Port\":12000,\"Peers\":\"0\"}";
-                Message msg = new Message("BootstrapNode","server", payload);
-                try {
-                    msgPasser.send(msg);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                //TODO: I'm pretty sure this batch of code is wrong and is what's causing our problem
 
-                //Now we wait to mke sure the peerlist has been updated
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                //Refresh the peerlist just in case
+//                InetAddress address= null;
+//                try {
+//                    address = InetAddress.getByName("");
+//                } catch (UnknownHostException e) {
+//                    e.printStackTrace();
+//                }
+//                String[] a = address.toString().split("/");
+//                String payload = "{\"Type\":0,\"Mid\":\""+ a[1]+ "\",\"Ipaddr\":\""+ a[1]+ "\",\"Port\":12000,\"Peers\":\"0\"}";
+//                Message msg = new Message("BootstrapNode","server", payload);
+//                try {
+//                    msgPasser.send(msg);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                //Now we wait to mke sure the peerlist has been updated
+//                try {
+//                    Thread.sleep(3000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
 
                 //Get all the current connections from messagePasserX's masterList and send the request out

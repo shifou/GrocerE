@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +36,8 @@ public class RequestPrice extends ActionBarActivity {
     MessagePasserService msgPasserService = null;
     public List<StoredItem> results = null;
     boolean boxChecked = false;
+    List<String> list = new ArrayList<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,18 @@ public class RequestPrice extends ActionBarActivity {
         CheckBox cb1;
 
         Button button1 = (Button)findViewById(R.id.requestbutton);
+
+
+
+        list.clear();
+        if(getFromSP("cb1"))
+            list.add(getResources().getString(R.string.store1));
+        if(getFromSP("cb2"))
+            list.add(getResources().getString(R.string.store2));
+        if(getFromSP("cb3"))
+            list.add(getResources().getString(R.string.store3));
+        if(getFromSP("cb4"))
+            list.add(getResources().getString(R.string.store4));
 
 
 
@@ -100,7 +116,12 @@ public class RequestPrice extends ActionBarActivity {
 
             if(((CheckBox) findViewById(R.id.offlineCheckbox)).isChecked()) {
 
+
+
+
                 results = dbm.locateItem(item.getText().toString());
+                results = dbm.checkStorePrefs(results,list);
+                Collections.sort(results);
                 ListAdapter adapter = new AnswerAdapter(RequestPrice.this,results);
                 ListView listView = (ListView) findViewById(R.id.answerList);
                 EditText itemField = (EditText) findViewById(R.id.editText5);
@@ -133,6 +154,7 @@ public class RequestPrice extends ActionBarActivity {
             startService(newIntent);
             SystemClock.sleep(15000);
             results = dbm.locateItem(item[0]);
+            results = dbm.checkStorePrefs(results,list);
             Collections.sort(results);
 
 
@@ -150,6 +172,11 @@ public class RequestPrice extends ActionBarActivity {
             button.setText("Request");
             listView.setAdapter(adapter);
         }
+    }
+
+    private boolean getFromSP(String key){
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, false);
     }
 
 
