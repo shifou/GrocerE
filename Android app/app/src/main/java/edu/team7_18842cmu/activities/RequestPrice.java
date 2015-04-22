@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -31,14 +33,18 @@ public class RequestPrice extends ActionBarActivity {
     private DBManager dbm;
     MessagePasserService msgPasserService = null;
     public List<StoredItem> results = null;
+    boolean boxChecked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dbm = new DBManager(this);
         setContentView(R.layout.activity_request_price);
+        CheckBox cb1;
 
         Button button1 = (Button)findViewById(R.id.requestbutton);
+
+
 
         msgPasserService = (MessagePasserService)this.getIntent().getSerializableExtra("messagePasser");
 
@@ -55,6 +61,8 @@ public class RequestPrice extends ActionBarActivity {
                 }
         );
     }
+
+
 
 
     @Override
@@ -90,19 +98,26 @@ public class RequestPrice extends ActionBarActivity {
         } else {
 
 
+            if(((CheckBox) findViewById(R.id.offlineCheckbox)).isChecked()) {
 
-            getResponses task = new getResponses();
-            task.execute(item.getText().toString());
-            item.setText("Fetching prices for \"" + item.getText() + "\"");
+                results = dbm.locateItem(item.getText().toString());
+                ListAdapter adapter = new AnswerAdapter(RequestPrice.this,results);
+                ListView listView = (ListView) findViewById(R.id.answerList);
+                EditText itemField = (EditText) findViewById(R.id.editText5);
+                itemField.setText("");
+                listView.setAdapter(adapter);
 
-            Button button = (Button)RequestPrice.this.findViewById(R.id.requestbutton);
-            button.setEnabled(false);
-            button.setBackgroundColor( -65536);
-            button.setText("Waiting");
+            } else {
 
+                getResponses task = new getResponses();
+                task.execute(item.getText().toString());
+                item.setText("Fetching prices for \"" + item.getText() + "\"");
+                Button button = (Button)RequestPrice.this.findViewById(R.id.requestbutton);
+                button.setEnabled(false);
+                button.setBackgroundColor( -65536);
+                button.setText("Waiting");
 
-
-
+            }
         }
     }
 
@@ -116,7 +131,7 @@ public class RequestPrice extends ActionBarActivity {
             extras.putString("functionName", "send");
             newIntent.putExtras(extras);
             startService(newIntent);
-            SystemClock.sleep(10000);
+            SystemClock.sleep(15000);
             results = dbm.locateItem(item[0]);
             Collections.sort(results);
 
