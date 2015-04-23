@@ -1,6 +1,6 @@
 package edu.team7_18842cmu.Network;
 
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedReader;
@@ -79,6 +79,7 @@ public class ServerReceiveHandler implements Runnable{
                 String line = "";
                 while((line = hostTemp.br.readLine()) != null){
                     msg += line;
+                    break;
                 }
 
 
@@ -94,10 +95,31 @@ public class ServerReceiveHandler implements Runnable{
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(msg);
 
                 String peerName = (String) jsonObject.get("Peers");
-                String[] Addrs = peerName.split("/+");
+                String[] Addrs = peerName.split("\\+");
                 for(int i=0; i < Addrs.length; i++) {
-                    HostWithSocketAndStream host = new HostWithSocketAndStream(Addrs[i]+":12000",Addrs[i], 12000);
-                    MP.listOfEverything.add(host);
+                    System.out.println("Addrs[" + i + "] =" + Addrs[i]);
+                    HostWithSocketAndStream host = new HostWithSocketAndStream(Addrs[i],Addrs[i],12000);
+
+
+                    //MP.listOfEverything.add(host);
+
+                    //Here we check if the IP address already exists in the listOfEverything
+                    boolean duplicate = false;
+                    for (HostWithSocketAndStream hst: MP.listOfEverything)
+                    {
+
+                        if (hst.hostName.equals(host.hostName))
+                        {
+                            //We have a duplicate
+                            duplicate = true;
+                            break;
+                        }
+                    }
+
+                    if (duplicate == false)
+                    {
+                        MP.listOfEverything.add(host);
+                    }
                 }
 //                for(int i = 0 ; i < peerList.length; i++){
 //                    Object[] objects = new Object[2];

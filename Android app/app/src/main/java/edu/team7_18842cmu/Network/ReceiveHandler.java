@@ -108,11 +108,11 @@ public class ReceiveHandler implements Runnable{
                 if(msg.getMessageType().equals("Request")) {
                     List<StoredItem> results;
                     results = dbm.locateItem((String) msg.getPayload());
-                    StringBuffer response = new StringBuffer();
+                    /*StringBuffer response = new StringBuffer();
                     for (int i = 0; i < results.size(); i++) {
                         response.append("ItemName "+ results.get(i).getItemName() + ":" + "Price "+ results.get(i).getItemPrice() + ",");
-                    }
-                    Message newMsg = new Message(msg.sourceNodeName, "Response", response.toString());
+                    }*/
+                    Message newMsg = new Message(msg.sourceNodeName, "Response", results);
                     MP.send(newMsg);
                 }
 
