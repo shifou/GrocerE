@@ -37,7 +37,7 @@ func checkConError(err error) int {
 
 			return 0
 		}
-		fmt.Println("an error!", err.Error())
+		fmt.Println("con an error!", err.Error())
 		return -1
 	}
 	return 1
@@ -61,7 +61,7 @@ type serverNode struct {
 func New() Server {
 	fileName := "db.log"
 	logFile, err := os.Create(fileName)
-	defer logFile.Close()
+
 	if err != nil {
 		logger.Fatalln("open file error !")
 	}
@@ -71,7 +71,7 @@ func New() Server {
 
 	var dberr error
 	dbU, dberr = sql.Open("sqlite3", "./user_data.db")
-	defer dbU.Close()
+
 	if dberr != nil || dbU == nil {
 		logger.Println(dberr)
 		return nil
@@ -83,7 +83,7 @@ func New() Server {
 	}
 
 	dbS, dberr = sql.Open("sqlite3", "./store_data.db")
-	defer dbS.Close()
+
 	if dberr != nil || dbS == nil {
 		logger.Println(dberr)
 		return nil
@@ -113,39 +113,100 @@ func handle(mes *serverNode, con net.Conn, id int) {
 			logger.Println("client ", id, " exit")
 			break
 		}
+		rr := string(rebuf[:num])
+		if strings.Index(rr, "::") != -1 {
+			continue
+		}
+		fmt.Println("receive: " + rr)
 		msg := &Message{}
 		err = json.Unmarshal(rebuf[0:num], msg)
 		if err == nil {
 			fmt.Println("###Client ###: :received" + msg.String())
-
+			if strings.Index(msg.Mid, ":") != -1 {
+				continue
+			}
 			switch msg.Type {
 			case MsgLogin:
 				stmt, err := dbU.Prepare("INSERT INTO users(Mid, Ipaddr, Port, Stores) values(?,?,?,?)")
-				res, err := stmt.Exec(msg.Mid, msg.Ipaddr, msg.Port, msg.Peers)
+				checkDbErr("login insert: "+msg.Mid+" ", err)
+				_, err = stmt.Exec(msg.Mid, msg.Ipaddr, msg.Port, msg.Peers)
 				if err != nil {
-					stmt, err = dbU.Prepare("update users set Ipaddr=?, Port=?, Stores=? where Mid=?")
-					res, err := stmt.Exec(msg.Ipaddr, msg.Port, msg.Peers, msg.Mid)
-					checkDbErr("update users set Ipaddr=?, Port=?, Stores=? where Mid=?", err)
+					/*
+						stmt, err = dbU.Prepare("update users set Ipaddr=?, Port=?, Stores=? where Mid=?")
+						_, err = stmt.Exec(msg.Ipaddr, msg.Port, msg.Peers, msg.Mid)
+					*/
+					//checkDbErr("update users set Ipaddr=?, Port=?, Stores=? where Mid=?", err)
+					fmt.Println("ip already exist")
 				}
-				_, err := wr.WriteString("logged")
-				if err != nil {
-					logger.Println(id + " send logged error")
+				rows, err := dbU.Query("select Mid from users where Mid!=?", msg.Mid)
+				checkDbErr("select ip exclude: "+msg.Mid+" ", err)
+				ans := ""
+				for rows.Next() {
+					var hold string
+					rows.Scan(&hold)
+					if ans == "" {
+						ans = hold
+					} else {
+						ans = ans + "+" + hold
+					}
 				}
+				rep := NewReply(msg.Ipaddr, msg.Port, ans)
+				fmt.Println("send query reply: " + rep.String())
+				repbuf, merr := json.Marshal(rep)
+				if merr != nil {
+					checkConError(merr)
+				}
+				_, reerr := wr.Write(repbuf)
+				if reerr != nil {
+					logger.Println(strconv.Itoa(id) + " send logged error")
+				}
+				/*
+					rep := NewReply(msg.Ipaddr, msg.Port, "")
+					fmt.Println("send login reply: " + rep.String())
+					repbuf, reerr := json.Marshal(rep)
+					if reerr != nil {
+						checkConError(reerr)
+					}
+					_, err := wr.Write(repbuf)
+					if err != nil {
+						logger.Println(id + " send logged error")
+					}*/
 			case MsgQuery:
-
+				rows, err := dbU.Query("select Mid from users where Mid!=?", msg.Mid)
+				checkDbErr("select ip: ", err)
+				ans := ""
+				for rows.Next() {
+					var hold string
+					rows.Scan(&hold)
+					if ans == "" {
+						ans = hold
+					} else {
+						ans = ans + "+" + hold
+					}
+				}
+				rep := NewReply(msg.Ipaddr, msg.Port, ans)
+				fmt.Println("send query reply: " + rep.String())
+				repbuf, merr := json.Marshal(rep)
+				if merr != nil {
+					checkConError(merr)
+				}
+				_, reerr := wr.Write(repbuf)
+				if reerr != nil {
+					logger.Println(strconv.Itoa(id) + " send logged error")
+				}
 			case MsgExit:
 				var ans string
 				var hold string
-				rows, err := dbU.Query("select Stores from users where Mid=?", msg.Mid).Scan(&ans)
+				err := dbU.QueryRow("select Stores from users where Mid=?", msg.Mid).Scan(&ans)
 				checkDbErr("exit user"+msg.String(), err)
 				fmt.Println("now list: " + ans)
-				storelist := ans.split(' ')
+				storelist := strings.Split(ans, "+")
 				for i := range storelist {
-					rows, err = dbS.Query("select List from stores where Name=?", strings.Trim(storelist[i])).Scan(&hold)
+					err = dbS.QueryRow("select List from stores where Name=?", strings.Trim(storelist[i], "")).Scan(&hold)
 					checkDbErr("exit user update: "+storelist[i], err)
-					hold = strings.Replace(s, msg.Mid, "", -1)
-					stmt, err = dbS.Prepare("update stores set List=? where Name=?")
-					res, err := stmt.Exec(hold, strings.Trim(storelist[i]))
+					hold = strings.Replace(hold, msg.Mid, "", -1)
+					stmt, _ := dbS.Prepare("update stores set List=? where Name=?")
+					_, err = stmt.Exec(hold, strings.Trim(storelist[i], ""))
 					checkDbErr("exit user update store: "+storelist[i]+" "+hold, err)
 				}
 			default:

@@ -46,7 +46,7 @@ func (m *Message) String() string {
 		payload = " " + m.Peers
 	case MsgReply:
 		name = "reply type"
-		payload = " " + m.Peers
+		payload = "" + m.Peers
 	case MsgExit:
 		name = "Exit type"
 		payload = ""
