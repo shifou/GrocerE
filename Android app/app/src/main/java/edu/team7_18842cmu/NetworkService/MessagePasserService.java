@@ -109,6 +109,8 @@ public class MessagePasserService extends Service {
 
                 //Get all the current connections from messagePasserX's masterList and send the request out
                 for (HostWithSocketAndStream host : msgPasser.listOfEverything) {
+                    if(host.getHostName().equals("BootstrapNode"))
+                        continue;
                     String dest = host.getHostName();
                     Message msg2 = new Message(dest, "Request", item);
                     //msg2.setSourceNodeName(msgPasser.serverName);
