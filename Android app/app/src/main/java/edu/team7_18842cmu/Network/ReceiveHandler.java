@@ -29,6 +29,7 @@ public class ReceiveHandler implements Runnable{
     HostWithSocketAndStream hostTemp;
     DBManager dbm;
 
+
     public ReceiveHandler(Socket client, MessagePasserX MP, DBManager dbm)
     {
         this .client = client;
@@ -38,6 +39,7 @@ public class ReceiveHandler implements Runnable{
 
     public void run()
     {
+        Boolean flag_clientIsInPeerlistWhenConnected = true;
         try
         {
             System.out.println("ReceiveHandler started with name:"+Thread.currentThread().getName());
@@ -45,8 +47,12 @@ public class ReceiveHandler implements Runnable{
             //Here we need to match the client source of the clientSocket to the destName in listofEverything
             for (HostWithSocketAndStream host: MP.listOfEverything)
             {
-                //client.
+                //Checking for matches in the listOfeverything.
                 if(host.ipAddr.equals(client.getInetAddress().getHostAddress().toString()))//and clientPorts are not equal
+
+
+
+
 
                 {
                     //Here we have matched the host in listOfeverything to this client socket that has connected
@@ -70,10 +76,51 @@ public class ReceiveHandler implements Runnable{
 
                     //Create new output stream
                     //host.setOS(new ObjectOutputStream(client.getOutputStream()));
+                    flag_clientIsInPeerlistWhenConnected = true;
                     break;
                 }
+
+                else
+                {
+                    flag_clientIsInPeerlistWhenConnected = false;
+
+
+                }
+
+
             }
 
+            if (flag_clientIsInPeerlistWhenConnected.equals(false))
+            {
+                //The socket is not in the list of everything, so we add it
+                HostWithSocketAndStream newHost = new HostWithSocketAndStream(client.getInetAddress().getHostAddress().toString(),client.getInetAddress().getHostAddress().toString(),12000);
+                newHost.setSocket(client);
+
+
+
+                System.out.println("Did NOT find the host in listOfEverything so we are creating it");
+                newHost.setSocket(client);
+                hostTemp = newHost;
+                //System.out.println("Creating an input stream for "+host.hostName+"@"+host.ipAddr+":"+host.port);
+                if (newHost.IS == null)
+                {
+                    IS = new ObjectInputStream(client.getInputStream());
+                    newHost.setIS(IS);
+                    System.out.println("Input stream created for "+newHost.hostName+"@"+newHost.ipAddr+":"+newHost.port);
+                }
+                if (newHost.OS == null)
+                {
+                    newHost.setOS(new ObjectOutputStream(client.getOutputStream()));
+                    System.out.println("Output stream created for "+newHost.hostName+"@"+newHost.ipAddr+":"+newHost.port);
+                }
+
+                MP.listOfEverything.add(newHost);
+
+
+
+                //Create new output stream
+                //host.setOS(new ObjectOutputStream(client.getOutputStream()));
+            }
 
             while (true)
             {
