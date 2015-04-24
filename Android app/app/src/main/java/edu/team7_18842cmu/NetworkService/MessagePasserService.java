@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Enumeration;
 
+import edu.team7_18842cmu.Network.BMulticast;
 import edu.team7_18842cmu.Network.HostWithSocketAndStream;
 import edu.team7_18842cmu.Network.Message;
 import edu.team7_18842cmu.Network.MessagePasserX;
@@ -106,7 +107,11 @@ public class MessagePasserService extends Service {
                     e.printStackTrace();
                 }
 
-
+                /*
+                BMulticast bm = new BMulticast(msgPasser);
+                WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+                bm.multicast(item,wifiMgr);
+                */
                 //Get all the current connections from messagePasserX's masterList and send the request out
                 for (HostWithSocketAndStream host : msgPasser.listOfEverything) {
                     if(host.getHostName().equals("BootstrapNode"))
