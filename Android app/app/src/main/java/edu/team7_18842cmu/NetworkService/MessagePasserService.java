@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
 
@@ -29,6 +30,8 @@ public class MessagePasserService extends Service {
     private static String nodeName;
     static MessagePasserX msgPasser;
     public  DBManager dbm;
+    Calendar c= Calendar.getInstance();
+    public long time = 0;
 
     @Override
     public void onCreate() {
@@ -54,6 +57,7 @@ public class MessagePasserService extends Service {
             String payload = "{\"Type\":0,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
             Message msg = new Message("BootstrapNode","server", payload);
             msgPasser.send(msg);
+            time = c.getTimeInMillis();
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,29 +87,32 @@ public class MessagePasserService extends Service {
             }*/
             if (function.equals(new String("send")))
             {
+                c= Calendar.getInstance();
+                
+                    //time = currentTime;
+                    //Refresh the peerlistjust in case
+                    InetAddress address = null;
+                    try {
+                        address = InetAddress.getByName("");
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                    String[] a = address.toString().split("/");
+                    String payload = "{\"Type\":0,\"Mid\":\"" + a[1] + "\",\"Ipaddr\":\"" + a[1] + "\",\"Port\":12000,\"Peers\":\"0\"}";
+                    Message msg = new Message("BootstrapNode", "server", payload);
+                    try {
+                        msgPasser.send(msg);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                //Refresh the peerlistjust in case
-                InetAddress address= null;
-                try {
-                    address = InetAddress.getByName("");
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-                String[] a = address.toString().split("/");
-                String payload = "{\"Type\":0,\"Mid\":\""+ a[1]+ "\",\"Ipaddr\":\""+ a[1]+ "\",\"Port\":12000,\"Peers\":\"0\"}";
-                Message msg = new Message("BootstrapNode","server", payload);
-                try {
-                    msgPasser.send(msg);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    //Now we wait to mke sure the peerlist has been updated
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-                //Now we wait to mke sure the peerlist has been updated
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
                 /*
                 BMulticast bm = new BMulticast(msgPasser);
