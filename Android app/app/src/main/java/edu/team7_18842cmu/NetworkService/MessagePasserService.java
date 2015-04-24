@@ -35,7 +35,7 @@ public class MessagePasserService extends Service {
 
     @Override
     public void onCreate() {
-        // The service is being created
+//        The service is being created comment
         dbm = new DBManager(this);
         System.out.println("DODODODODO");
                 //TODO: Init message passer here
@@ -97,8 +97,14 @@ public class MessagePasserService extends Service {
                     } catch (UnknownHostException e) {
                         e.printStackTrace();
                     }
-                    String[] a = address.toString().split("/");
-                    String payload = "{\"Type\":0,\"Mid\":\"" + a[1] + "\",\"Ipaddr\":\"" + a[1] + "\",\"Port\":12000,\"Peers\":\"0\"}";
+//                    String[] a = address.toString().split("/");
+                WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+                WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+                int ip = wifiInfo.getIpAddress();
+                String ipAddress = Formatter.formatIpAddress(ip);
+
+                     String payload = "{\"Type\":0,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
+//                    String payload = "{\"Type\":0,\"Mid\":\"" + a[1] + "\",\"Ipaddr\":\"" + a[1] + "\",\"Port\":12000,\"Peers\":\"0\"}";
                     Message msg = new Message("BootstrapNode", "server", payload);
                     try {
                         msgPasser.send(msg);
@@ -127,10 +133,10 @@ public class MessagePasserService extends Service {
                     Message msg2 = new Message(dest, "Request", item);
                     //msg2.setSourceNodeName(msgPasser.serverName);
 
-                    WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
-                    WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-                    int ip = wifiInfo.getIpAddress();
-                    String ipAddress = Formatter.formatIpAddress(ip);
+//                    WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+//                    WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+//                    int ip = wifiInfo.getIpAddress();
+//                    String ipAddress = Formatter.formatIpAddress(ip);
                     System.out.println("---------------------SourceNode name is:" + dest + "--------------------------------------------");
                     msg2.setSourceNodeName(ipAddress);
 
