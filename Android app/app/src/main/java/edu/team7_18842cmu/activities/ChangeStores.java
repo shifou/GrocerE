@@ -1,14 +1,9 @@
 package edu.team7_18842cmu.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
-
 import android.content.SharedPreferences;
 import android.widget.CompoundButton;
 
@@ -20,6 +15,7 @@ public class ChangeStores extends ActionBarActivity implements CompoundButton.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_stores);
 
+        // Set up the checkboxes used for the store preferences
         CheckBox cb1,cb2,cb3,cb4;
 
         cb1 = (CheckBox)findViewById(R.id.store1checkbox);
@@ -51,6 +47,8 @@ public class ChangeStores extends ActionBarActivity implements CompoundButton.On
         return super.onOptionsItemSelected(item);
     }
 
+    // This checks if the checkbox is checked and stores the results in
+    // the "SharedPreferences"
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         // Is the view now checked?
         boolean checked = ((CheckBox) buttonView).isChecked();
@@ -96,23 +94,7 @@ public class ChangeStores extends ActionBarActivity implements CompoundButton.On
         }
     }
 
-    public void savePrefs(View view) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Status Message")
-                    .setMessage("Store preferences saved!")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // continue
-                            finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-
-
-
-    }
-
+    // This stores the key/value pair in the SharedPreferences
     private void saveStore(String key,boolean value){
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -120,6 +102,7 @@ public class ChangeStores extends ActionBarActivity implements CompoundButton.On
         editor.commit();
     }
 
+    // This returns the value of the key from SharedPreferences
     private boolean getFromSP(String key){
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
         return preferences.getBoolean(key, false);

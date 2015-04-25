@@ -37,8 +37,8 @@ public class MessagePasserService extends Service {
     public void onCreate() {
 //        The service is being created comment
         dbm = new DBManager(this);
-        System.out.println("DODODODODO");
-                //TODO: Init message passer here
+        //TODO: Init message passer here
+        // This pastebin file is how the node knows learns where the BootstrapNode is.
         configFile = "http://pastebin.com/raw.php?i=whdf6rBa";
         clockOption = "vector";
         nodeName = "nodeName";
@@ -50,13 +50,9 @@ public class MessagePasserService extends Service {
             WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
             int ip = wifiInfo.getIpAddress();
             String ipAddress = Formatter.formatIpAddress(ip);
-
-//            InetAddress address=InetAddress.getLocalHost();
-//            String[] a = address.toString().split("/");
-//            System.out.println("%%%%%% " + ipAddress);
             String payload = "{\"Type\":0,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
             Message msg = new Message("BootstrapNode","server", payload);
-//            msgPasser.send(msg);
+            msgPasser.send(msg);
             time = c.getTimeInMillis();
             
         } catch (Exception e) {
@@ -71,25 +67,11 @@ public class MessagePasserService extends Service {
        String item = intent.getStringExtra("itemRequest");
 
         if(function != null) {
-            /*if (function.equals(new String("send")))
-            {
-                //Get send params from intent
-                Message msg = new Message ("192.168.2.3", "Request", item);
-//                Message msg = (Message) intent.getSerializableExtra("messageObject");
-                System.out.println("Destination Node Name" + msg.getDestinationNodeName());
-                System.out.println("Query: " + item);
-                System.out.println("Msg Payload: " + msg.getPayload());
-                try {
-                    msgPasser.send(msg);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }*/
+
             if (function.equals(new String("send")))
             {
                 c= Calendar.getInstance();
                 
-                    //time = currentTime;
                     //Refresh the peerlistjust in case
                     InetAddress address = null;
                     try {
@@ -97,14 +79,13 @@ public class MessagePasserService extends Service {
                     } catch (UnknownHostException e) {
                         e.printStackTrace();
                     }
-//                    String[] a = address.toString().split("/");
+
                 WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
                 WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
                 int ip = wifiInfo.getIpAddress();
                 String ipAddress = Formatter.formatIpAddress(ip);
 
-                     String payload = "{\"Type\":0,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
-//                    String payload = "{\"Type\":0,\"Mid\":\"" + a[1] + "\",\"Ipaddr\":\"" + a[1] + "\",\"Port\":12000,\"Peers\":\"0\"}";
+                    String payload = "{\"Type\":0,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
                     Message msg = new Message("BootstrapNode", "server", payload);
                     try {
                         msgPasser.send(msg);
@@ -125,18 +106,13 @@ public class MessagePasserService extends Service {
                 WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
                 bm.multicast(item,wifiMgr);
                 */
+
                 //Get all the current connections from messagePasserX's masterList and send the request out
                 for (HostWithSocketAndStream host : msgPasser.listOfEverything) {
                     if(host.getHostName().equals("BootstrapNode"))
                         continue;
                     String dest = host.getHostName();
                     Message msg2 = new Message(dest, "Request", item);
-                    //msg2.setSourceNodeName(msgPasser.serverName);
-
-//                    WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
-//                    WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-//                    int ip = wifiInfo.getIpAddress();
-//                    String ipAddress = Formatter.formatIpAddress(ip);
                     System.out.println("---------------------SourceNode name is:" + dest + "--------------------------------------------");
                     msg2.setSourceNodeName(ipAddress);
 

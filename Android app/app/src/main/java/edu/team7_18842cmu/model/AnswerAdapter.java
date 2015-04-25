@@ -18,6 +18,7 @@ import edu.team7_18842cmu.activities.R;
 
 /**
  * Created by Nick on 4/5/2015.
+ * This adapter is required to properly display the information for a StoredItem
  */
 
 public class AnswerAdapter extends BaseAdapter {

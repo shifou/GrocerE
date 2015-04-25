@@ -21,39 +21,6 @@ public class ItemInfo {
         this.quantity = quantity;
     }
 
-    public boolean checkForm(){
-        if(this.itemName.trim().length() == 0)
-            return true;
-        if(this.quantity.trim().length() == 0)
-            return true;
-        if(this.store.trim().length() == 0)
-            return true;
-        if(itemPrice.trim().length() == 0)
-            return true;
-        if(this.purchaseDate.trim().length() == 0)
-            return true;
-        return false;
-    }
-
-    public String getItemName(){
-        return this.itemName;
-    }
-
-    public String getItemPrice(){
-        return this.itemPrice;
-    }
-
-    public String getStore(){
-        return this.store;
-    }
-
-    public String getPurchaseDate(){
-        return this.purchaseDate;
-    }
-
-    public String getQuantity(){
-        return this.quantity;
-    }
 
     public Object[] getAttributes(){
         Object[] objects = new Object[5];

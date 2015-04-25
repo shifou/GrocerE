@@ -9,6 +9,7 @@ import java.util.Date;
 
 /**
  * Created by Nick on 4/4/2015.
+ * This defines the StoredItem object and everything we need to operate on them.
  */
 public class StoredItem implements Serializable,Comparable{
     public String itemName, itemStore, itemSize;
@@ -60,12 +61,15 @@ public class StoredItem implements Serializable,Comparable{
         return purchaseDate;
     }
 
+
     @Override
+    // The purpose of this is to allow StoredItems to be sorted by the price field
     public int compareTo(Object another) {
         StoredItem orig = (StoredItem)another;
         return (itemPrice.compareTo(orig.itemPrice));
     }
 
+    // The purpose of this is to determine if two StoredItems are identical.
     public Boolean isEqual(StoredItem item){
         if(itemName.equals(item.getItemName()))
             if(itemSize.equals(item.getItemSize()))

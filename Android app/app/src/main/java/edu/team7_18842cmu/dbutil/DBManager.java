@@ -54,12 +54,16 @@ public class DBManager {
         }
     }
 
+    // This method take a list of "StoredItems" and inserts it into the database. This is called
+    // when the app receives a response to a price query. The payload of the response is a
+    // list of StoredItems.
     public void insertList(List<StoredItem> response){
         System.out.println("# Prices returned: " + response.size());
         for(int i = 0; i < response.size(); i++) {
             StoredItem item = response.get(i);
-            ItemInfo itemInfo = new ItemInfo(item.getItemName().toString(), item.getItemPrice().toString(),
-                    item.getItemStore().toString(), item.getPurchaseDate().toString(), item.getItemSize().toString());
+            ItemInfo itemInfo = new ItemInfo(item.getItemName().toString(),
+                    item.getItemPrice().toString(), item.getItemStore().toString(),
+                    item.getPurchaseDate().toString(), item.getItemSize().toString());
             insert("priceInfo", itemInfo.getAttributes());
             System.out.println("Inserted: " + item.getItemName().toString());
 
@@ -67,58 +71,16 @@ public class DBManager {
     }
 
 
-
-    //return a which contains <Store : Price> for the given item
-    //the given items might have different types. etc. milk(brand1) price:20 milk(brand2) price:30
-    //return a list of the price, can be used to calculate average or median (TBD)
-    public HashMap<String, List<Double>> getItemsInStores(List<String> stores, String tableName, String itemName){
-        HashMap<String, List<Double>> result = new HashMap<String, List<Double>>();
-        for(int i = 0 ; i < stores.size(); i++){
-            Cursor c = db.rawQuery("SELECT * FROM " + tableName + " where store = "+ stores.get(i) + " and itemName = " + itemName, null);
-            while (c.moveToNext()) {
-                String store = c.getString(c.getColumnIndex("store"));
-                Double price = Double.parseDouble(c.getString(c.getColumnIndex("itemPrice")));
-                if(result.containsKey(store)) {
-                    List<Double> ls = result.get(store);
-                    ls.add(price);
-                    result.put(store, ls);
-                }
-                else{
-                    List<Double> ls = new ArrayList<Double>();
-                    ls.add(price);
-                    result.put(store, ls);
-                }
-            }
-            c.close();
-        }
-        return result;
-
-    }
-
-    /**
-     * query all items
-     * @return List<String>
-     */
-//    public void queryTest() {
-//        Cursor c = db.rawQuery("SELECT * FROM priceInfo", null);
-//
-//        while (c.moveToNext()) {
-//           String s = rowToString(c);
-//            Log.d("GrocerE", s );
-//        }
-//        c.close();
-//    }
-
     // Locate item names in the database and return all matches
     public List<StoredItem> locateItem(String query) {
+
         Cursor c = db.rawQuery("SELECT * FROM priceInfo", null);
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, "priceInfo");
         List<StoredItem> results = new ArrayList<StoredItem>();
         int answerCount = 0;
 
         while (c.moveToNext()){
             String name = c.getString(c.getColumnIndex("itemName")).toLowerCase();
-            if (name.contains(query.toLowerCase())) {
+            if(name.contains(query.toLowerCase())) {
                 results.add(answerCount, rowToObject(c));
                 answerCount++;
             }
@@ -126,47 +88,39 @@ public class DBManager {
         return results;
     }
 
-    // Convert a row in the item database to a string
-//    public String rowToString(Cursor c) {
-//        String s = "";
-//        s += "No."+ Integer.toString(c.getInt(c.getColumnIndex("_id")));
-//        s += " Item Name:" + c.getString(c.getColumnIndex("itemName"));
-//        s += " Item Price:" + c.getString(c.getColumnIndex("itemPrice"));
-//        s += " Item Quantity:" + c.getString(c.getColumnIndex("itemQuantity"));
-//        s += " Store:" + c.getString(c.getColumnIndex("store"));
-//        s += " Purchase Date:" + c.getString(c.getColumnIndex("purchaseDate"));
-//        return s;
-//    }
 
     // This converts a row in the database to a StoredItem object
     public StoredItem rowToObject(Cursor c) {
+
         StoredItem item = new StoredItem();
         item.itemName = c.getString(c.getColumnIndex("itemName"));
         item.itemSize = c.getString(c.getColumnIndex("itemQuantity"));
         item.itemStore = c.getString(c.getColumnIndex("store"));
-
         String price = c.getString(c.getColumnIndex("itemPrice"));
         item.itemPrice = new BigDecimal(price);
-
         String date = c.getString(c.getColumnIndex("purchaseDate"));
         item.purchaseDate = new Date(date);
-
 
         return item;
 
     }
 
+    // This take a list of StoredItems as an input. The output is another list of StoredItems
+    // where any StoredItems that already exist in the database have been removed.
     public List<StoredItem> checkForDupes(List<StoredItem> input){
+
         List<StoredItem> output = new ArrayList<StoredItem>();
         Boolean duplicate = false;
 
         for(int i=0; i < input.size(); i++) {
+
             StoredItem candidate = input.get(i);
             String itemName = candidate.getItemName();
             List<StoredItem> matches = locateItem(itemName);
 
             for(int j=0; j < matches.size(); j++) {
                 StoredItem existing = matches.get(j);
+
                 if(candidate.isEqual(existing)){
                     System.out.println("Found a duplicate item!!!");
                     duplicate = true;
@@ -185,7 +139,12 @@ public class DBManager {
         return output;
     }
 
+    // This takes a list of StoredItems as an input, along with a list of the user's
+    // store preferences. It returns a filtered list of StoredItems based on these preferences.
+    // If the item is from a store not in the user's preferences, then it is removed from
+    // the list.
     public List<StoredItem> checkStorePrefs(List<StoredItem> input, List<String> list){
+
         List<StoredItem> output = new ArrayList<StoredItem>();
 
         for(int i=0; i < input.size(); i++){
