@@ -43,6 +43,15 @@
         android:theme="@style/Base.TextAppearance.AppCompat.Large.Inverse"
         android:textColor="@android:color/black" />
 
+    <CheckBox android:id="@+id/offlineCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Local Query"
+        android:textColor="@android:color/black"
+        android:layout_below="@+id/editText5"
+        android:layout_alignLeft="@+id/requestbutton"
+        android:layout_alignStart="@+id/requestbutton" />
+
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

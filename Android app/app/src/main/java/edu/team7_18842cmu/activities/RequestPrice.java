@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -13,12 +16,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Handler;
 
 import edu.team7_18842cmu.Network.Message;
 import edu.team7_18842cmu.NetworkService.MessagePasserService;
@@ -31,14 +38,32 @@ public class RequestPrice extends ActionBarActivity {
     private DBManager dbm;
     MessagePasserService msgPasserService = null;
     public List<StoredItem> results = null;
+    boolean boxChecked = false;
+    List<String> list = new ArrayList<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dbm = new DBManager(this);
         setContentView(R.layout.activity_request_price);
+        CheckBox cb1;
 
         Button button1 = (Button)findViewById(R.id.requestbutton);
+
+
+
+        list.clear();
+        if(getFromSP("cb1"))
+            list.add(getResources().getString(R.string.store1));
+        if(getFromSP("cb2"))
+            list.add(getResources().getString(R.string.store2));
+        if(getFromSP("cb3"))
+            list.add(getResources().getString(R.string.store3));
+        if(getFromSP("cb4"))
+            list.add(getResources().getString(R.string.store4));
+
+
 
         msgPasserService = (MessagePasserService)this.getIntent().getSerializableExtra("messagePasser");
 
@@ -55,6 +80,8 @@ public class RequestPrice extends ActionBarActivity {
                 }
         );
     }
+
+
 
 
     @Override
@@ -90,37 +117,59 @@ public class RequestPrice extends ActionBarActivity {
         } else {
 
 
-
-            getResponses task = new getResponses();
-            task.execute(item.getText().toString());
-            item.setText("Fetching prices for \"" + item.getText() + "\"");
-
-            Button button = (Button)RequestPrice.this.findViewById(R.id.requestbutton);
-            button.setEnabled(false);
-            button.setBackgroundColor( -65536);
-            button.setText("Waiting");
+            if(((CheckBox) findViewById(R.id.offlineCheckbox)).isChecked()) {
 
 
 
 
+                results = dbm.locateItem(item.getText().toString());
+                results = dbm.checkStorePrefs(results,list);
+                Collections.sort(results);
+                ListAdapter adapter = new AnswerAdapter(RequestPrice.this,results);
+                ListView listView = (ListView) findViewById(R.id.answerList);
+                EditText itemField = (EditText) findViewById(R.id.editText5);
+                itemField.setText("");
+                listView.setAdapter(adapter);
+
+            } else {
+
+                getResponses task = new getResponses();
+                task.execute(item.getText().toString());
+                item.setText("Fetching prices for \"" + item.getText() + "\"");
+                Button button = (Button)RequestPrice.this.findViewById(R.id.requestbutton);
+                button.setEnabled(false);
+                button.setBackgroundColor( -65536);
+                button.setText("Waiting");
+
+            }
         }
     }
 
     private class getResponses extends AsyncTask<String, Void, List<StoredItem>> {
         @Override
-        protected List<StoredItem> doInBackground(String... item) {
+        protected List<StoredItem> doInBackground(final String... item) {
             Intent newIntent = new Intent(RequestPrice.this, MessagePasserService.class);
-            List<StoredItem> results = null;
+//            List<StoredItem> results = null;
+            Boolean timerDone = false;
+
+
             Bundle extras = new Bundle();
             extras.putString("itemRequest", item[0]);
             extras.putString("functionName", "send");
             newIntent.putExtras(extras);
-            startService(newIntent);
-            SystemClock.sleep(10000);
+//            startService(newIntent);
+
+            try {
+                Thread.sleep(15000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             results = dbm.locateItem(item[0]);
+            results = dbm.checkStorePrefs(results,list);
             Collections.sort(results);
 
-
+            Collections.sort(results);
             return results;
         }
 
@@ -135,6 +184,11 @@ public class RequestPrice extends ActionBarActivity {
             button.setText("Request");
             listView.setAdapter(adapter);
         }
+    }
+
+    private boolean getFromSP(String key){
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, false);
     }
 
 

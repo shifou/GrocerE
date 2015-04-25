@@ -56,7 +56,7 @@ public class MessagePasserService extends Service {
 //            System.out.println("%%%%%% " + ipAddress);
             String payload = "{\"Type\":0,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
             Message msg = new Message("BootstrapNode","server", payload);
-            msgPasser.send(msg);
+//            msgPasser.send(msg);
             time = c.getTimeInMillis();
             
         } catch (Exception e) {

@@ -10,11 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 import edu.team7_18842cmu.StoredItem;
+import edu.team7_18842cmu.activities.R;
 import edu.team7_18842cmu.model.ItemInfo;
 
 
@@ -182,6 +184,20 @@ public class DBManager {
         }
         return output;
     }
+
+    public List<StoredItem> checkStorePrefs(List<StoredItem> input, List<String> list){
+        List<StoredItem> output = new ArrayList<StoredItem>();
+
+        for(int i=0; i < input.size(); i++){
+            StoredItem item = input.get(i);
+            if(list.contains(item.getItemStore())){
+                output.add(item);
+            }
+        }
+
+        return output;
+    }
+
 
     /**
      * close database
