@@ -10,10 +10,6 @@ import java.util.ArrayList;
 public class TimeStamp implements Serializable
 {
     ArrayList<Long> timeStamp;
-    public TimeStamp()
-    {
-        this.timeStamp = new ArrayList<Long>();
-    }
     public TimeStamp(ArrayList<Long> timeStamp)
     {
         this.timeStamp = timeStamp;
