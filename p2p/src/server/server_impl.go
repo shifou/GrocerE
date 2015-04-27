@@ -101,7 +101,7 @@ func New() Server {
 	return mes
 }
 
-func handle(mes *serverNode, con net.Conn, id int) {
+func handle(fkk string, mes *serverNode, con net.Conn, id int) {
 	var wr = bufio.NewWriter(con)
 	var re = bufio.NewReader(con)
 	var rebuf [2000]byte
@@ -115,6 +115,9 @@ func handle(mes *serverNode, con net.Conn, id int) {
 		} else if flag == -1 {
 			fmt.Println("WARNING: client forced to quit", id, " exit")
 			logger.Println("WARNING: client forced to quit", id, " exit")
+			stmt, err := dbU.Prepare("delete from users where Mid = ?")
+			checkDbErr("login exit: "+fkk+" ", err)
+			_, err = stmt.Exec(fkk)
 			break
 		}
 		rr := string(rebuf[:num])
@@ -127,9 +130,14 @@ func handle(mes *serverNode, con net.Conn, id int) {
 		msg := &Message{}
 		err = json.Unmarshal(rebuf[0:num], msg)
 		if err == nil {
-			fmt.Println("###Client ###: :received" + msg.String())
+			fmt.Println("###Client " + strconv.Itoa(id) + " ###: :received" + msg.String())
 			if strings.Index(msg.Mid, ":") != -1 {
 				continue
+			}
+			if strings.Index(msg.Mid, "10.") != -1 {
+				fmt.Println("change from " + msg.Mid + " to " + fkk)
+				msg.Mid = fkk
+				msg.Ipaddr = fkk
 			}
 			switch msg.Type {
 			case MsgLogin:
@@ -217,6 +225,8 @@ func handle(mes *serverNode, con net.Conn, id int) {
 					_, reerr := wr.Write(repbuf)
 					if reerr != nil {
 						logger.Println(strconv.Itoa(id) + " send logged error")
+					} else {
+						fmt.Println(msg.Mid, " delete done")
 					}
 				}
 				/*
@@ -280,8 +290,11 @@ func (mes *serverNode) Start(port int) error {
 			*/
 			conn, err := ln.Accept()
 			if err == nil {
-				fmt.Println("received from: " + conn.RemoteAddr().String())
-				go handle(mes, conn, i)
+				fk := conn.RemoteAddr().String()
+				ss := strings.Index(fk, ":")
+				fk = fk[:ss]
+				fmt.Println("received from: " + fk)
+				go handle(fk, mes, conn, i)
 				i++
 			}
 		}

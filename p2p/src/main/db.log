@@ -1,1 +1,5 @@
-[INFO]2015/04/26 18:54:51 server_impl.go:70: ==========start===========
+[INFO]2015/04/27 17:15:57 server_impl.go:70: ==========start===========
+[INFO]2015/04/27 17:16:13 server_impl.go:49: exec:  login insert: 127.0.0.1 
+[INFO]2015/04/27 17:16:13 server_impl.go:49: exec:  select ip exclude: 127.0.0.1 
+[INFO]2015/04/27 17:18:26 server_impl.go:49: exec:  login insert: 102.0.0.4 
+[INFO]2015/04/27 17:18:26 server_impl.go:49: exec:  select ip exclude: 102.0.0.4 
