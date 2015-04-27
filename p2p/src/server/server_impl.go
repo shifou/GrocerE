@@ -112,9 +112,15 @@ func handle(mes *serverNode, con net.Conn, id int) {
 			fmt.Println("client ", id, " exit")
 			logger.Println("client ", id, " exit")
 			break
+		} else if flag == -1 {
+			fmt.Println("WARNING: client forced to quit", id, " exit")
+			logger.Println("WARNING: client forced to quit", id, " exit")
+			break
 		}
 		rr := string(rebuf[:num])
+
 		if strings.Index(rr, "::") != -1 {
+			fmt.Println("!!!!!!!!")
 			continue
 		}
 		fmt.Println("receive: " + rr)
@@ -195,20 +201,40 @@ func handle(mes *serverNode, con net.Conn, id int) {
 					logger.Println(strconv.Itoa(id) + " send logged error")
 				}
 			case MsgExit:
-				var ans string
-				var hold string
-				err := dbU.QueryRow("select Stores from users where Mid=?", msg.Mid).Scan(&ans)
-				checkDbErr("exit user"+msg.String(), err)
-				fmt.Println("now list: " + ans)
-				storelist := strings.Split(ans, "+")
-				for i := range storelist {
-					err = dbS.QueryRow("select List from stores where Name=?", strings.Trim(storelist[i], "")).Scan(&hold)
-					checkDbErr("exit user update: "+storelist[i], err)
-					hold = strings.Replace(hold, msg.Mid, "", -1)
-					stmt, _ := dbS.Prepare("update stores set List=? where Name=?")
-					_, err = stmt.Exec(hold, strings.Trim(storelist[i], ""))
-					checkDbErr("exit user update store: "+storelist[i]+" "+hold, err)
+				stmt, err := dbU.Prepare("delete from users where Mid = ?")
+				checkDbErr("login exit: "+msg.Mid+" ", err)
+				_, err = stmt.Exec(msg.Mid)
+				if err != nil {
+					logger.Println(msg.Mid + " exit error no such Mid")
+					fmt.Println(msg.Mid + " wrong id to exit")
+				} else {
+					rep := NewReply(msg.Ipaddr, msg.Port, "exit!")
+					fmt.Println("send exit reply: " + rep.String())
+					repbuf, merr := json.Marshal(rep)
+					if merr != nil {
+						checkConError(merr)
+					}
+					_, reerr := wr.Write(repbuf)
+					if reerr != nil {
+						logger.Println(strconv.Itoa(id) + " send logged error")
+					}
 				}
+				/*
+					var ans string
+					var hold string
+					err := dbU.QueryRow("select Stores from users where Mid=?", msg.Mid).Scan(&ans)
+					checkDbErr("exit user"+msg.String(), err)
+					fmt.Println("now list: " + ans)
+					storelist := strings.Split(ans, "+")
+					for i := range storelist {
+						err = dbS.QueryRow("select List from stores where Name=?", strings.Trim(storelist[i], "")).Scan(&hold)
+						checkDbErr("exit user update: "+storelist[i], err)
+						hold = strings.Replace(hold, msg.Mid, "", -1)
+						stmt, _ := dbS.Prepare("update stores set List=? where Name=?")
+						_, err = stmt.Exec(hold, strings.Trim(storelist[i], ""))
+						checkDbErr("exit user update store: "+storelist[i]+" "+hold, err)
+					}
+				*/
 			default:
 				fmt.Println("unknow query type name")
 			}

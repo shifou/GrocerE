@@ -1,18 +1,1 @@
-[INFO]2015/04/22 16:21:48 server_impl.go:70: ==========start===========
-[INFO]2015/04/22 16:21:54 server_impl.go:49: exec:  login insert: 128.237.165.46 
-[INFO]2015/04/22 16:21:54 server_impl.go:49: exec:  select ip exclude: 128.237.165.46 
-[INFO]2015/04/22 16:22:09 server_impl.go:49: exec:  login insert: 128.237.163.66 
-[INFO]2015/04/22 16:22:09 server_impl.go:49: exec:  select ip exclude: 128.237.163.66 
-[INFO]2015/04/22 16:22:47 server_impl.go:113: client  2  exit
-[INFO]2015/04/22 16:22:54 server_impl.go:49: exec:  login insert: 128.237.163.66 
-[INFO]2015/04/22 16:22:54 server_impl.go:49: exec:  select ip exclude: 128.237.163.66 
-[INFO]2015/04/22 16:23:49 server_impl.go:113: client  3  exit
-[INFO]2015/04/22 16:23:54 server_impl.go:49: exec:  login insert: 128.237.163.66 
-[INFO]2015/04/22 16:23:54 server_impl.go:49: exec:  select ip exclude: 128.237.163.66 
-[INFO]2015/04/22 16:25:08 server_impl.go:113: client  4  exit
-[INFO]2015/04/22 16:25:38 server_impl.go:49: exec:  login insert: 128.237.163.66 
-[INFO]2015/04/22 16:25:38 server_impl.go:49: exec:  select ip exclude: 128.237.163.66 
-[INFO]2015/04/22 16:26:14 server_impl.go:113: client  1  exit
-[INFO]2015/04/22 16:26:20 server_impl.go:49: exec:  login insert: 128.237.165.46 
-[INFO]2015/04/22 16:26:20 server_impl.go:49: exec:  select ip exclude: 128.237.165.46 
-[INFO]2015/04/22 16:29:34 server_impl.go:113: client  6  exit
+[INFO]2015/04/26 18:54:51 server_impl.go:70: ==========start===========

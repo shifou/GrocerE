@@ -59,55 +59,6 @@ public class LogicalClockService extends ClockService
         //lamportTimeStamp.set(0, Math.max(lamportTimeStamp.get(0), someoneElsesTimeStamp.timeStamp.get(0)) + 1);
         this.getSemaphore().release();
     }
-    //Check all the compare between Long before using. please use .compareTo
-	/*public static boolean happenedBefore(LogicalClockService l1, LogicalClockService l2)
-	{
-		try
-		{
-			l1.getSemaphore().acquire();
-			l2.getSemaphore().acquire();
-			if(l1.getTimeStamp().get(0) < l2.getTimeStamp().get(0))
-			{
-				l1.getSemaphore().release();
-				l2.getSemaphore().release();
-				return true;
-			}
-			else
-			{
-				l1.getSemaphore().release();
-				l2.getSemaphore().release();
-				return false;
-			}
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		return false;
-	}*/
 
-    //Check all the compare between Long before using. please use .compareTo
-	/*public boolean happenedBefore(TimeStamp timeStamp)
-	{
-		try
-		{
-			this.getSemaphore().acquire();
-			if(this.getTimeStamp().get(0) < timeStamp.timeStamp.get(0))
-			{
-				this.getSemaphore().release();
-				return true;
-			}
-			else
-			{
-				this.getSemaphore().release();
-				return false;
-			}
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		return false;
-	}*/
 }
 
