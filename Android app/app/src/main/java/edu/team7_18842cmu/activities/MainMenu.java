@@ -1,6 +1,5 @@
 package edu.team7_18842cmu.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,30 +19,20 @@ public class MainMenu extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        // Set up the buttons for the Main Menu
         Button button1 = (Button)findViewById(R.id.button1);
         Button button2 = (Button)findViewById(R.id.button2);
         Button button3 = (Button)findViewById(R.id.button3);
         Button button4 = (Button)findViewById(R.id.button4);
 
-//        //Network Service Stuff
-//        //TODO: start the service
-//        //Context context = null;
-////        Intent i = new Intent(getBaseContext(), MessagePasserService.class);
-////        Intent i = new Intent(this, MessagePasserService.class);
-//        final MessagePasserService MessagePasser = new MessagePasserService();
-//        Intent i = new Intent(MainMenu.this, MessagePasserService.class);
-//        startService(i);
-
+        // Start the MessagePasser service in its own thread
         Intent msgPasserIntent = new Intent(this, MessagePasserService.class);
-        //startService(msgPasserIntent);
         Thread t = new Thread(new MsgPasserStarter(msgPasserIntent));
         t.start();
 
 
-
-        //TODO: Initialize the service
-        //Intent i = new Intent(this, MessagePasserService.class);
-
+        // What will happen when the user click on a UI button
         button1.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {

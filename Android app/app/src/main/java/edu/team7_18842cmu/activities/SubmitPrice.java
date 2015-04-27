@@ -32,6 +32,8 @@ public class SubmitPrice extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dbm = new DBManager(this);
+
+        // Set up the buttons for this menu
         setContentView(R.layout.activity_submit_price);
         Button button1 = (Button)findViewById(R.id.submitbutton);
 
@@ -43,6 +45,9 @@ public class SubmitPrice extends ActionBarActivity {
                 }
         );
 
+        // Set up a spinner based on the user's Store Preferences
+        // User should only be able to submit prices for a store they prefer
+        // to shop at
         Spinner spinner = (Spinner) findViewById(R.id.spinner1);
         ArrayAdapter<String> adapter;
         List<String> list;
@@ -79,6 +84,9 @@ public class SubmitPrice extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // This is needed to display the calendar the user will choose the date from instead
+    // of having them manually type the date manually. This way, the date will always
+    // be displayed in a consistent format.
     private class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
@@ -104,15 +112,18 @@ public class SubmitPrice extends ActionBarActivity {
         }
     }
 
+    // This displays the date picker
     public void showDatePicker(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
-
     }
 
 
+    // Here's the code that executes when the user clicks the submit price button.
     public void submitPrice(View view) {
-//        final EditText item = (EditText) findViewById(R.id.editText1);
+
+        // Check if the user forgot to submit any fields. If they did, display a notification
+        // which tells them what they still need to fill out.
         String missing_fields = checkForm();
         if(!missing_fields.isEmpty()){
             new AlertDialog.Builder(this)
@@ -125,41 +136,51 @@ public class SubmitPrice extends ActionBarActivity {
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
+
+        // If every submission field has data, the information can be submitted to the database
         } else {
+            // Get the information that was written into the form
             EditText item = (EditText) findViewById(R.id.editText2);
             EditText quantity = (EditText) findViewById(R.id.editText1);
             Spinner store = (Spinner) findViewById(R.id.spinner1);
             EditText price = (EditText) findViewById(R.id.editText4);
             TextView date = (TextView) findViewById(R.id.editText6);
+
+            // Format the information properly so the database can use it
             final ItemInfo itemInfo = new ItemInfo(item.getText().toString(), price.getText().toString(),
                     store.getSelectedItem().toString(), date.getText().toString(), quantity.getText().toString());
+
+            // Notify the user the price for the item was submitted successfully
             new AlertDialog.Builder(this)
                     .setTitle("Status Message")
                     .setMessage("Price submitted!\n\nItem: " + item.getText())
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            // continue
+                            // Write the information to the database
                             dbm.insert("priceInfo", itemInfo.getAttributes());
-                            clearForm();
-//                            dbm.queryTest();
+                            clearForm(); // Clear the form so the next price can be submitted
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-
-
     }
 
+    // This checks every field in the form to make sure some data has been submitted. A string
+    // is returned which contains the name of every field that is empty.
     public String checkForm() {
+
         String response = "";
         Boolean missing_flag = false;
+
+        // Get the values in each field in the form.
         EditText item = (EditText) findViewById(R.id.editText1);
         EditText quantity = (EditText) findViewById(R.id.editText2);
         Spinner store = (Spinner) findViewById(R.id.spinner1);
         EditText price = (EditText) findViewById(R.id.editText4);
         TextView date = (TextView) findViewById(R.id.editText6);
 
+        // Build the response string if any fields are missing in the form
         if(store.getSelectedItem().toString() == "Choose a store") {
                 response += "Store name";
                 missing_flag = true;
@@ -197,9 +218,13 @@ public class SubmitPrice extends ActionBarActivity {
                 response += ", Purchase date";
         }
 
+        // Return the response string
         return response;
     }
 
+    // This clears all of the fields in the Price Submission form, except for the store spinner.
+    // The reason that won't be cleared is in the most common use case, the user will be submitting
+    // prices consecutively from the same store.
     public void clearForm() {
         EditText item = (EditText) findViewById(R.id.editText1);
         EditText quantity = (EditText) findViewById(R.id.editText2);
@@ -211,6 +236,7 @@ public class SubmitPrice extends ActionBarActivity {
         date.setText("");
     }
 
+    // This gets the value of the key in the Store Preferences
     private boolean getFromSP(String key){
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("PROJECT_NAME", android.content.Context.MODE_PRIVATE);
         return preferences.getBoolean(key, false);

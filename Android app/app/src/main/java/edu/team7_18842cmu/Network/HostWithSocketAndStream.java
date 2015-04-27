@@ -19,7 +19,6 @@ public class HostWithSocketAndStream
     String hostName;
     String ipAddr;
     int port;
-    int clientPort;
     Socket socket;
     ObjectInputStream IS;
     ObjectOutputStream OS;
