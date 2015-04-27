@@ -112,7 +112,7 @@ public class MainMenu extends ActionBarActivity {
     }
 
     public void closeApplication(View view) {
-
+        System.out.println("$$$$$$$$$$$$$$$");
         Intent newIntent = new Intent(this, MessagePasserService.class);
         Bundle extras = new Bundle();
         extras.putString("functionName", "teardown");
@@ -120,6 +120,7 @@ public class MainMenu extends ActionBarActivity {
         Button button = (Button)MainMenu.this.findViewById(R.id.button4);
         button.setText("Exiting...Please Wait");
         startService(newIntent);
+        finish();
     }
 
     public class MsgPasserStarter implements Runnable
