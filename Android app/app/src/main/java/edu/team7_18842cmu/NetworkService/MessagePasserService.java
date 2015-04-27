@@ -63,9 +63,10 @@ public class MessagePasserService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // The service is starting, due to a call to startService()
 
-               String function = intent.getStringExtra("functionName");
-       String item = intent.getStringExtra("itemRequest");
+        String function = intent.getStringExtra("functionName");
+        String item = intent.getStringExtra("itemRequest");
         System.out.println("Started in message passer");
+
         if(function != null) {
 
             if (function.equals(new String("send")))
@@ -131,7 +132,8 @@ public class MessagePasserService extends Service {
                 }
             }
 
-            else if (function.equals(new String("teardown"))){
+            else if(function.equals(new String("teardown"))){
+
                 System.out.println("Made it to teardown");
                 WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
                 WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
@@ -145,38 +147,42 @@ public class MessagePasserService extends Service {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                System.exit(0);
+//                System.exit(0);
+                stopSelf();
+//                android.os.Process.killProcess(android.os.Process.myPid());
+
+
 
             }
 
-            else if (function.equals(new String("receive")))
-            {
-                Message recvMsg = msgPasser.receive();
-                if (recvMsg!=null)
-                {
-                    System.out.println("The next received message is: ("+ (String)recvMsg.getDestinationNodeName()+","+ (String) recvMsg.getMessageType());
-                    String callingActivity = intent.getStringExtra("callingActivity");
-
-                    //Get the class name of the sender
-                    Class callerClass = null;
-                    try {
-                        callerClass = Class.forName(callingActivity);
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                    //Send an intent back to caller
-                    //Note: this will fail if the above catch is triggered
-                    //TODO: have receivers listen to this
-                    //TODO: pretty sure this is already an explicit intent. but need to verify
-                    Intent replyIntent = new Intent(this,callerClass);
-                    startActivity(replyIntent);
-                }
-                else
-                {
-                    System.out.println("No message to receive...");
-                }
-            }
+//            else if (function.equals(new String("receive")))
+//            {
+//                Message recvMsg = msgPasser.receive();
+//                if (recvMsg!=null)
+//                {
+//                    System.out.println("The next received message is: ("+ (String)recvMsg.getDestinationNodeName()+","+ (String) recvMsg.getMessageType());
+//                    String callingActivity = intent.getStringExtra("callingActivity");
+//
+//                    //Get the class name of the sender
+//                    Class callerClass = null;
+//                    try {
+//                        callerClass = Class.forName(callingActivity);
+//                    } catch (ClassNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    //Send an intent back to caller
+//                    //Note: this will fail if the above catch is triggered
+//                    //TODO: have receivers listen to this
+//                    //TODO: pretty sure this is already an explicit intent. but need to verify
+//                    Intent replyIntent = new Intent(this,callerClass);
+//                    startActivity(replyIntent);
+//                }
+//                else
+//                {
+//                    System.out.println("No message to receive...");
+//                }
+//            }
             return 0;
         }
 
@@ -194,5 +200,6 @@ public class MessagePasserService extends Service {
     @Override
     public void onDestroy() {
         // The service is no longer used and is being destroyed
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }
