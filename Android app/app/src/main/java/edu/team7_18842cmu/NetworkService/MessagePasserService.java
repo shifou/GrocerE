@@ -65,7 +65,7 @@ public class MessagePasserService extends Service {
 
                String function = intent.getStringExtra("functionName");
        String item = intent.getStringExtra("itemRequest");
-
+        System.out.println("Started in message passer");
         if(function != null) {
 
             if (function.equals(new String("send")))
@@ -129,6 +129,24 @@ public class MessagePasserService extends Service {
                         }
                     }
                 }
+            }
+
+            else if (function.equals(new String("teardown"))){
+                System.out.println("Made it to teardown");
+                WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+                WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+                int ip = wifiInfo.getIpAddress();
+                String ipAddress = Formatter.formatIpAddress(ip);
+                String payload = "{\"Type\":3,\"Mid\":\""+ ipAddress+ "\",\"Ipaddr\":\""+ ipAddress + "\",\"Port\":12000,\"Peers\":\"0\"}";
+                Message msg = new Message("BootstrapNode", "server", payload);
+                try {
+                    msgPasser.send(msg);
+                    Thread.sleep(3000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                System.exit(0);
+
             }
 
             else if (function.equals(new String("receive")))
